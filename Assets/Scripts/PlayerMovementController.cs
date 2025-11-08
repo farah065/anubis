@@ -52,6 +52,7 @@ public class PlayerMovementController : MonoBehaviour
     public LayerMask groundLayers;
 
     [Header("Feedbacks")]
+    public MMF_Player dashFeedbacks;
     public MMF_Player footstepFeedbacks;
     public MMF_Player jumpFeedbacks;
     public MMF_Player landFeedbacks;
@@ -125,6 +126,7 @@ public class PlayerMovementController : MonoBehaviour
         _animIDJump = Animator.StringToHash("Jump");
         _animIDFreeFall = Animator.StringToHash("FreeFall");
         _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        _animIDDash = Animator.StringToHash("Dash");
     }
 
     private void GroundedCheck()
@@ -311,12 +313,13 @@ public class PlayerMovementController : MonoBehaviour
                 // Dash finished, start cooldown
                 _isDashing = false;
                 _dashTimeoutDelta = dashTimeout; // Start cooldown timer
+                dashFeedbacks?.StopFeedbacks();
             }
 
             // Update animator and return early
             if (_hasAnimator)
             {
-                //_animator.SetBool(_animIDDash, true);
+                _animator.SetBool(_animIDDash, true);
             }
             return;
         }
@@ -354,16 +357,17 @@ public class PlayerMovementController : MonoBehaviour
             _isDashing = true;
             _dashTimeRemaining = dashDistance / dashSpeed;
 
+            dashFeedbacks?.PlayFeedbacks();
             // Update animator
             if (_hasAnimator)
             {
-                //_animator.SetBool(_animIDDash, true);
+                _animator.SetBool(_animIDDash, true);
             }
         }
         else if (_hasAnimator)
         {
             // Only set to false when not dashing
-            //_animator.SetBool(_animIDDash, false);
+            _animator.SetBool(_animIDDash, false);
         }
     }
     private void OnFootstep(AnimationEvent animationEvent)
