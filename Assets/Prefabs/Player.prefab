@@ -1118,13 +1118,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12104c49e7d3a804ab2d6fec26d18faf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3.87
-  sprintSpeed: 5.335
+  moveSpeed: 6
   rotationSmoothTime: 0.12
   speedChangeRate: 10
+  dashSpeed: 30
+  dashDistance: 3
   jumpHeight: 1.2
   gravity: -15
   jumpTimeout: 0.5
+  dashTimeout: 0.5
   fallTimeout: 0.15
   grounded: 1
   groundedOffset: -0.14
@@ -1132,9 +1134,9 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 1
-  footstepFeedback: {fileID: 0}
-  jumpFeedback: {fileID: 0}
-  landFeedback: {fileID: 0}
+  footstepFeedbacks: {fileID: 0}
+  jumpFeedbacks: {fileID: 0}
+  landFeedbacks: {fileID: 0}
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0

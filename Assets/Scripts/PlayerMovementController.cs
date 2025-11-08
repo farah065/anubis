@@ -15,6 +15,12 @@ public class PlayerMovementController : MonoBehaviour
     [Tooltip("Acceleration and deceleration")]
     public float speedChangeRate = 10.0f;
 
+    [Tooltip("Dash speed of the character in m/s")]
+    public float dashSpeed = 30.0f;
+
+    [Tooltip("Dash distance of the character in meters")]
+    public float dashDistance = 3.0f;
+
     [Space(10)]
     [Tooltip("The height the player can jump")]
     public float jumpHeight = 1.2f;
@@ -25,6 +31,9 @@ public class PlayerMovementController : MonoBehaviour
     [Space(10)]
     [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
     public float jumpTimeout = 0.50f;
+
+    [Tooltip("Time required to pass before being able to dash again. Set to 0f to instantly dash")]
+    public float dashTimeout = 0.50f;
 
     [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
     public float fallTimeout = 0.15f;
@@ -50,27 +59,30 @@ public class PlayerMovementController : MonoBehaviour
     //player
     private float _speed;
     private float _animationBlend;
-    private float _targetRotation = 0.0f;
+    private float _targetRotation ;
     private float _rotationVelocity;
     private float _verticalVelocity;
-    private float _terminalVelocity = 53.0f;
+    private readonly float _terminalVelocity = 53.0f;
+    private bool _isDashing;
+    private Vector3 _dashDirection;
+    private float _dashTimeRemaining;
 
-    // timeout deltatime
+    // timeout delta-time
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
+    private float _dashTimeoutDelta;
 
     // animation IDs
     private int _animIDSpeed;
     private int _animIDGrounded;
     private int _animIDJump;
+    private int _animIDDash;
     private int _animIDFreeFall;
     private int _animIDMotionSpeed;
 
     private Animator _animator;
     private CharacterController _controller;
     private GameObject _mainCamera;
-
-    private const float Threshold = 0.01f;
 
     private bool _hasAnimator;
 
@@ -102,6 +114,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         JumpAndGravity();
         GroundedCheck();
+        Dash();
         Move();
     }
 
@@ -131,9 +144,9 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Move()
     {
+        if (_isDashing) { return; }
         Vector2 moveInput = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
         // set target speed based on move speed, sprint speed and if sprint is pressed
-        //float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
         float targetSpeed = moveSpeed;
 
         if(moveInput == Vector2.zero) targetSpeed = 0.0f;
@@ -165,7 +178,7 @@ public class PlayerMovementController : MonoBehaviour
         // normalise input direction
         Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
 
-        // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+        // note: Vector2's != operator uses approximation so is not floating point error-prone, and is cheaper than magnitude
         // if there is a move input rotate player when the player is moving
         if (moveInput != Vector2.zero)
         {
@@ -197,8 +210,7 @@ public class PlayerMovementController : MonoBehaviour
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
         Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-        if (grounded) Gizmos.color = transparentGreen;
-        else Gizmos.color = transparentRed;
+        Gizmos.color = grounded ? transparentGreen : transparentRed;
 
         // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
         Gizmos.DrawSphere(
@@ -280,6 +292,80 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
 
+    private void Dash()
+    {
+        // If currently dashing, handle the dash movement
+        if (_isDashing)
+        {
+            // keep dash timer ticking
+            if (_dashTimeRemaining > 0f)
+            {
+                _dashTimeRemaining -= Time.deltaTime;
+
+                // Apply dash movement
+                _controller.Move(_dashDirection.normalized * (dashSpeed * Time.deltaTime) +
+                                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            }
+            else
+            {
+                // Dash finished, start cooldown
+                _isDashing = false;
+                _dashTimeoutDelta = dashTimeout; // Start cooldown timer
+            }
+
+            // Update animator and return early
+            if (_hasAnimator)
+            {
+                //_animator.SetBool(_animIDDash, true);
+            }
+            return;
+        }
+
+        // If not dashing, count down the cooldown timer
+        if (_dashTimeoutDelta > 0.0f)
+        {
+            _dashTimeoutDelta -= Time.deltaTime;
+        }
+
+        // Check for dash input (only when not dashing and cooldown is complete)
+        bool dashInput = false;
+        var dashAction = InputSystem.actions.FindAction("Dash");
+        if (dashAction != null)
+        {
+            dashInput = dashAction.triggered;
+        }
+
+        if (dashInput && _dashTimeoutDelta <= 0.0f)
+        {
+            // choose dash direction based on current move input and camera, fallback to forward
+            Vector2 moveInput = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
+            if (moveInput != Vector2.zero)
+            {
+                Vector3 inputDir = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
+                float targetRot = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg +
+                                  _mainCamera.transform.eulerAngles.y;
+                _dashDirection = Quaternion.Euler(0.0f, targetRot, 0.0f) * Vector3.forward;
+            }
+            else
+            {
+                _dashDirection = transform.forward;
+            }
+
+            _isDashing = true;
+            _dashTimeRemaining = dashDistance / dashSpeed;
+
+            // Update animator
+            if (_hasAnimator)
+            {
+                //_animator.SetBool(_animIDDash, true);
+            }
+        }
+        else if (_hasAnimator)
+        {
+            // Only set to false when not dashing
+            //_animator.SetBool(_animIDDash, false);
+        }
+    }
     private void OnFootstep(AnimationEvent animationEvent)
     {
         footstepFeedbacks?.PlayFeedbacks();

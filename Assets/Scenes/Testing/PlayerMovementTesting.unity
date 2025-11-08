@@ -706,8 +706,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7556844261012438536, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+      propertyPath: dashSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7556844261012438536, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: moveSpeed
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7556844261012438536, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+      propertyPath: dashDistance
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
