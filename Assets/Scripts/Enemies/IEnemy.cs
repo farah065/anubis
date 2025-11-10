@@ -4,7 +4,7 @@ using UnityEngine.AI;
 public interface IEnemy
 {
     EnemyScriptableObject EnemyData { get; }
-    Vector3 Target { get; }
+    GameObject Target { get; }
     NavMeshAgent Agent { get; }
     void Initialise();
     void Attack();

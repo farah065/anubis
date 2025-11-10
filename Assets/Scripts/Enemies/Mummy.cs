@@ -5,14 +5,16 @@ using UnityEngine.AI;
 public class Mummy : MonoBehaviour, IEnemy
 {
     public EnemyScriptableObject EnemyData { get => _enemyData; }
-    public Vector3 Target { get => _target; }
+    public GameObject Target { get => _target; }
     public NavMeshAgent Agent { get => _navMeshAgent; }
 
     [SerializeField] private EnemyScriptableObject _enemyData;
     [SerializeField] private NavMeshAgent _navMeshAgent;
-    private Vector3 _target;
+    [SerializeField] private Animator _animator;
+    private GameObject _target;
     private IObjectPool<Mummy> _zombiePool;
     private float _currentHp;
+    private Vector3 _initialPosition;
 
     private void OnEnable()
     {
@@ -21,28 +23,29 @@ public class Mummy : MonoBehaviour, IEnemy
 
     private void Update()
     {
-        // if player in detection range, set target to player position
-        // use a sphere overlap check to detect player
-        Collider[] hits = Physics.OverlapSphere(transform.position, EnemyData.DetectionRange);
-        foreach (var hit in hits)
+        if (Target != null)
         {
-            if (hit.CompareTag("Player"))
-            {
-                _target = hit.transform.position;
-                _navMeshAgent.SetDestination(_target);
-                break;
-            }
+            Agent.SetDestination(Target.transform.position);
         }
+        _animator.SetFloat("speed", Agent.velocity.magnitude);
     }
 
     public void Initialise()
     {
         _currentHp = EnemyData.MaxHp;
+        _initialPosition = transform.position;
     }
 
     public void Attack()
     {
 
+    }
+
+    public void Partol()
+    {
+        // walk to a random point around initial position
+        Vector3 randomDirection = Random.insideUnitSphere * 5f;
+        randomDirection += _initialPosition;
     }
 
     public void TakeDamage(float damage)
@@ -71,5 +74,13 @@ public class Mummy : MonoBehaviour, IEnemy
         Gizmos.DrawWireSphere(transform.position, EnemyData.DetectionRange);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, EnemyData.AttackRange);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _target = other.gameObject;
+        }
     }
 }
