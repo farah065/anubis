@@ -10,8 +10,8 @@ namespace DefaultNamespace
 
         [Header("References")]
         [SerializeField] private PlayerMovementController playerBody;
-        [SerializeField] private Camera mainCamera;
         [SerializeField] private CinemachinePositionComposer cinemachinePositionComposer;
+        private Camera mainCamera;
 
         [Header("Settings")]
         [SerializeField] private float lookMaxDistance = 5f;
@@ -23,6 +23,7 @@ namespace DefaultNamespace
 
         private void Awake()
         {
+            mainCamera = playerInput.camera;
             if (playerBody == null)
             {
                 Debug.LogWarning("Player Movement Controller not assigned in player look controller.");
@@ -30,7 +31,7 @@ namespace DefaultNamespace
             }
             if (mainCamera == null)
             {
-                Debug.LogWarning("Camera Transform not assigned in player look controller.");
+                Debug.LogWarning("Camera Transform not assigned in Player Input.");
                 mainCamera = Camera.main;
             }
             if (cinemachinePositionComposer == null)
