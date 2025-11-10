@@ -333,6 +333,7 @@ MonoBehaviour:
   jumpFeedbacks: {fileID: 0}
   landFeedbacks: {fileID: 0}
   dashFeedbacks: {fileID: 1704721875}
+  meleeFeedbacks: {fileID: 0}
 --- !u!114 &840986502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,6 +351,8 @@ MonoBehaviour:
     m_Bits: 64
   playerMovementController: {fileID: 840986497}
   playerLookController: {fileID: 840986496}
+  playerAnimationController: {fileID: 840986501}
+  projectilePrefab: {fileID: 1888434345910479824, guid: 6854b55959887e5498cf75b3189cf4ba, type: 3}
   playerInput: {fileID: 840986500}
   baseMeleeAttackRange: 2
   baseMeleeAttackDamage: 10
@@ -359,8 +362,9 @@ MonoBehaviour:
   comboResetTime: 0.9
   baseRangedAttackRange: 10
   baseRangedAttackDamage: 8
-  baseRangedAttackSpeed: 1.5
-  baseRangedAttackArea: 0
+  baseRangedAttackSpeed: 15
+  baseRangedAttackArea: 2
+  rangedAttackCooldown: 1
   baseBlockEfficiency: 0.5
   baseParryTimingWindow: 0.3
 --- !u!1 &974549605

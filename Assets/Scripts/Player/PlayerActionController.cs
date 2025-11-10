@@ -14,7 +14,9 @@ namespace GEM
         [Header("References")]
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerLookController playerLookController;
-        [SerializeField] private PlayerAnimationController playerAnimationController; // added for melee anims
+        [SerializeField] private PlayerAnimationController playerAnimationController;
+
+        [SerializeField] private GameObject projectilePrefab; // for ranged attacks
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput; // required for reading melee attack input
@@ -32,6 +34,7 @@ namespace GEM
         [SerializeField] private float baseRangedAttackDamage = 8;
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
         [SerializeField] private float baseRangedAttackArea = 0f;
+        [SerializeField] private float rangedAttackCooldown = 5f;
 
         [Header("Block Settings")]
         [SerializeField] private float baseBlockEfficiency = 0.5f;
@@ -42,6 +45,8 @@ namespace GEM
         private float _attackComboDelta;  // combo continuation window timer
         private int _attackComboNum;      // current combo index (0..2)
         private int MAX_COMBO = 3;
+        private int ATTACK_HEIGHT_OFFSET = 1;
+        private float _rangedAttackDelta;
 
         void Awake()
         {
@@ -98,10 +103,9 @@ namespace GEM
             float attackDamage = baseMeleeAttackDamage; // could scale with combo index
             float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
             float attackAngle = 90f; // frontal arc
-            float attackHeightOffset = 1f;
 
             Vector3 forward = transform.forward;
-            Vector3 attackOrigin = transform.position + Vector3.up * attackHeightOffset;
+            Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
             Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
             foreach (var hit in hitColliders)
             {
@@ -137,14 +141,42 @@ namespace GEM
 
         private void RangedAttack()
         {
-            // Implement ranged attack logic here using baseRangedAttackRange, baseRangedAttackDamage, etc.
-            // Example: Instantiate a projectile and set its speed and area of effect
+            if (_rangedAttackDelta > 0f) _rangedAttackDelta -= Time.deltaTime;
+            var rangedAction = playerInput != null ? playerInput.actions.FindAction("Ranged Attack") : null;
+            bool rangedTriggered = rangedAction != null && rangedAction.triggered;
+            if (!rangedTriggered || _rangedAttackDelta > 0f) return;
+
+            playerMovementController?.SetPlayerRotation(playerLookController.CurrentLookDirection);
+
+            // instantiate projectile if prefab assigned
+            if (projectilePrefab != null)
+            {
+                Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
+                Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
+                var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
+                var proj = go.GetComponent<PlayerProjectile>();
+                if (proj != null)
+                {
+                    proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
+            }
+
+            _rangedAttackDelta = rangedAttackCooldown; // start cooldown
         }
 
         private void Block()
         {
             // Implement block logic here using baseBlockEfficiency and baseParryTimingWindow
             // Example: Reduce incoming damage based on block efficiency and check for parry timing
+        }
+
+        private void OnAttackAnimationEnded()
+        {
+            playerMovementController?.SetIsPerformingAction(false);
         }
 
         private void OnDrawGizmos()
