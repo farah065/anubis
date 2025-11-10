@@ -684,7 +684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyData: {fileID: 11400000, guid: a57f1e93fa56dbd4b88c09cc764316fe, type: 2}
-  _navMeshAgent: {fileID: 8642508460745101068}
+  _agent: {fileID: 8642508460745101068}
   _animator: {fileID: 1125248093450804088}
 --- !u!195 &8642508460745101068
 NavMeshAgent:

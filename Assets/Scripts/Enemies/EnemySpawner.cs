@@ -5,13 +5,13 @@ public class EnemySpawner : Singleton<EnemySpawner>
 {
     [SerializeField] private Transform[] _spawnPoints;
 
-    [SerializeField] private Mummy _zombiePrefab;
-    private IObjectPool<Mummy> _zombiePool;
+    [SerializeField] private Mummy _mummyPrefab;
+    private IObjectPool<Mummy> _mummyPool;
 
     public override void Awake()
     {
         base.Awake();
-        _zombiePool = new ObjectPool<Mummy>(CreateEnemy, OnGet, OnRelease);
+        _mummyPool = new ObjectPool<Mummy>(CreateEnemy, OnGet, OnRelease);
     }
 
     private void Update()
@@ -24,8 +24,8 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private Mummy CreateEnemy()
     {
-        Mummy enemy = Instantiate(_zombiePrefab);
-        enemy.SetPool(_zombiePool);
+        Mummy enemy = Instantiate(_mummyPrefab);
+        enemy.SetPool(_mummyPool);
         return enemy;
     }
 
@@ -43,6 +43,6 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     public void SpawnZombie()
     { 
-        _zombiePool.Get();
+        _mummyPool.Get();
     }
 }

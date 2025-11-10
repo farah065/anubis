@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d59aa8529e02a74d9d37e971280816e, type: 3}
   m_Name: Mummy
   m_EditorClassIdentifier: 
-  Speed: 3
+  FollowSpeed: 3.5
+  PatrolSpeed: 1
+  AngularSpeed: 120
+  Acceleration: 8
+  StoppingDistance: 1.8
   MaxHp: 20
   Damage: 5
   DetectionRange: 3

@@ -824,7 +824,7 @@ MonoBehaviour:
   - {fileID: 2074732368}
   - {fileID: 1376555924}
   - {fileID: 646504452}
-  _zombiePrefab: {fileID: 1225030279485949484, guid: 9c17bc45f6e79d04f90c40136b010d84, type: 3}
+  _mummyPrefab: {fileID: 1225030279485949484, guid: 9c17bc45f6e79d04f90c40136b010d84, type: 3}
 --- !u!4 &1125471732
 Transform:
   m_ObjectHideFlags: 0
