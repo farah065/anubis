@@ -91,7 +91,11 @@ namespace GEM
             bool attackTriggered = meleeAction != null && meleeAction.triggered;
 
             // only proceed if input triggered and per-attack cooldown finished and combo not maxed out
-            if (!attackTriggered || _attackDelta > 0f) return;
+            if (!attackTriggered || _attackDelta > 0f)
+            {
+                playerAnimationController.SetMelee(-1);
+                return;
+            }
             if (_attackComboDelta > 0f && _attackComboNum == MAX_COMBO) return;
 
             // execute attack
@@ -130,7 +134,7 @@ namespace GEM
 
             // trigger animation with current combo stage
             int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
-            playerAnimationController?.PlayMelee(stage);
+            playerAnimationController?.SetMelee(stage);
 
             // reset timers
             _attackDelta = meleeAttackCooldown * (1/baseMeleeAttackSpeed); // set cooldown before next attack allowed

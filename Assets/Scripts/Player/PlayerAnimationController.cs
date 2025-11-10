@@ -84,11 +84,16 @@ namespace GEM
             }
         }
 
-        public void PlayMelee(int stage)
+        public void SetMelee(int stage)
         {
+            if (stage == -1)
+            {
+                animator.SetBool(_animIDAttack, false);
+                return;
+            }
             if (!_hasAnimator) return;
             animator.SetInteger(_animIDAttackIndex, stage);
-            animator.SetTrigger(_animIDAttack);
+            animator.SetBool(_animIDAttack, true);
             meleeFeedbacks?.PlayFeedbacks();
         }
 

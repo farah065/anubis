@@ -58,7 +58,7 @@ public class PlayerProjectile : MonoBehaviour
         }
         else
         {
-            if (_impactCollider != null && ((1 << _impactCollider.gameObject.layer) & enemyLayerMask) != 0)
+            if (_impactCollider != null && _impactCollider.gameObject.layer == enemyLayerMask)
             {
                 var enemy = _impactCollider.GetComponent<TestEnemy>();
                 if (enemy != null) enemy.OnHit();
