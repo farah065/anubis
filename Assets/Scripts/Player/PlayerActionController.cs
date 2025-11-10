@@ -39,6 +39,7 @@ namespace GEM
         [Header("Block Settings")]
         [SerializeField] private float baseBlockEfficiency = 0.5f;
         [SerializeField] private float baseParryTimingWindow = 0.3f;
+        [SerializeField] private float parryActivationCooldown = 1.0f; // cooldown to prevent spamming parry
 
         // timeout delta-time (repurposed)
         private float _attackDelta;       // per-attack cooldown timer
@@ -47,6 +48,21 @@ namespace GEM
         private int MAX_COMBO = 3;
         private int ATTACK_HEIGHT_OFFSET = 1;
         private float _rangedAttackDelta;
+
+        // Block / Parry state
+        private InputAction _blockAction;
+        private InputAction _meleeAction;
+        private InputAction _rangedAction;
+        private bool _isBlocking;
+        private bool _isInParryWindow;
+        private float _parryWindowTimer;
+        private float _parryActivationTimer;
+        private bool _parryConsumedThisHold;
+        private bool _wasBlocking;
+
+        // read-only accessors
+        public bool IsBlocking => _isBlocking;
+        public bool IsInParryWindow => _isInParryWindow;
 
         void Awake()
         {
@@ -61,6 +77,16 @@ namespace GEM
                 Debug.LogWarning("Player Look Controller not assigned in Player Action Controller.");
                 playerLookController = FindFirstObjectByType<PlayerLookController>();
             }
+
+            // cache block action if possible
+            if (playerInput != null && playerInput.currentActionMap != null)
+            {
+                var map = playerInput.currentActionMap;
+                _blockAction = map.FindAction("Block") ?? map.FindAction("Block Hold");
+                // cache melee and ranged actions as well
+                _meleeAction = map.FindAction("Melee Attack") ?? map.FindAction("MeleeAttack");
+                _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
+            }
         }
 
         private void Update()
@@ -68,6 +94,7 @@ namespace GEM
             MeleeAttack();
             RangedAttack();
             Block();
+
         }
 
         private void MeleeAttack()
@@ -86,9 +113,8 @@ namespace GEM
                 }
             }
 
-            // read attack input (assumes an action named "MeleeAttack")
-            var meleeAction = playerInput != null ? playerInput.actions.FindAction("Melee Attack") : null;
-            bool attackTriggered = meleeAction != null && meleeAction.triggered;
+            // read cached melee action
+            bool attackTriggered = _meleeAction != null && _meleeAction.WasPerformedThisFrame();
 
             // only proceed if input triggered and per-attack cooldown finished and combo not maxed out
             if (!attackTriggered || _attackDelta > 0f)
@@ -100,7 +126,7 @@ namespace GEM
 
             // execute attack
             playerMovementController?.SetIsPerformingAction(true);
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentLookDirection);
+            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
 
             // base stats (placeholders for future modifiers per combo stage)
             float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
@@ -146,37 +172,90 @@ namespace GEM
         private void RangedAttack()
         {
             if (_rangedAttackDelta > 0f) _rangedAttackDelta -= Time.deltaTime;
-            var rangedAction = playerInput != null ? playerInput.actions.FindAction("Ranged Attack") : null;
-            bool rangedTriggered = rangedAction != null && rangedAction.triggered;
-            if (!rangedTriggered || _rangedAttackDelta > 0f) return;
+            bool rangedTriggered = _rangedAction != null && _rangedAction.WasPerformedThisFrame();
+             if (!rangedTriggered || _rangedAttackDelta > 0f) return;
 
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentLookDirection);
+             //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
+             playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
 
-            // instantiate projectile if prefab assigned
-            if (projectilePrefab != null)
-            {
-                Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
-                Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
-                var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
-                var proj = go.GetComponent<PlayerProjectile>();
-                if (proj != null)
-                {
-                    proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
-            }
+             // instantiate projectile if prefab assigned
+             if (projectilePrefab != null)
+             {
+                 Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
+                 Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
+                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
+                 var proj = go.GetComponent<PlayerProjectile>();
+                 if (proj != null)
+                 {
+                     proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
+                 }
+             }
+             else
+             {
+                 Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
+             }
 
-            _rangedAttackDelta = rangedAttackCooldown; // start cooldown
-        }
+             _rangedAttackDelta = rangedAttackCooldown; // start cooldown
+         }
 
         private void Block()
         {
-            // Implement block logic here using baseBlockEfficiency and baseParryTimingWindow
-            // Example: Reduce incoming damage based on block efficiency and check for parry timing
-        }
+            // tick parry activation cooldown always
+            if (_parryActivationTimer > 0f) _parryActivationTimer -= Time.deltaTime;
+
+            // read block hold state
+            bool blockHeld = _blockAction != null ? _blockAction.IsPressed() : (playerInput != null && playerInput.actions.FindAction("Block")?.IsPressed() == true);
+
+            // update parry window countdown if active
+            if (_isInParryWindow)
+            {
+                _parryWindowTimer -= Time.deltaTime;
+                if (_parryWindowTimer <= 0f)
+                {
+                    _isInParryWindow = false;
+                    // do NOT reset _parryConsumedThisHold here; keep consumed until release
+                }
+            }
+
+            // Detect rising edge: block just started this frame
+            bool justStartedHolding = blockHeld && !_wasBlocking;
+
+            if (justStartedHolding)
+            {
+                // begin blocking
+                _isBlocking = true;
+                playerMovementController?.SetIsPerformingAction(true);
+                playerAnimationController?.SetBlock(true);
+                // mark parry as potentially consumable this hold
+                _parryConsumedThisHold = false;
+
+                // Only open parry window at the start of the hold, if activation cooldown allows
+                if (_parryActivationTimer <= 0f)
+                {
+                    _isInParryWindow = true;
+                    _parryWindowTimer = baseParryTimingWindow;
+                    _parryActivationTimer = parryActivationCooldown;
+                    _parryConsumedThisHold = true;
+                }
+            }
+            else if (blockHeld && _isBlocking)
+            {
+                // still holding: do nothing else (parry won't reopen while holding)
+            }
+            else if (!blockHeld && _wasBlocking)
+            {
+                // block was released this frame
+                _isBlocking = false;
+                playerMovementController?.SetIsPerformingAction(false);
+                playerAnimationController?.SetBlock(false);
+                // reset consumed flag so next new hold can attempt parry (subject to cooldown)
+                _parryConsumedThisHold = false;
+                _isInParryWindow = false;
+                _parryWindowTimer = 0f;
+            }
+
+            _wasBlocking = blockHeld;
+         }
 
         private void OnAttackAnimationEnded()
         {
@@ -202,5 +281,17 @@ namespace GEM
             Handles.DrawSolidArc(origin, Vector3.up, Quaternion.Euler(0, -attackAngle/2, 0) * forward, attackAngle, attackRange);
         }
 
+        private void OnGUI()
+        {
+            // Small debug overlay for testing states
+            GUILayout.BeginArea(new Rect(10, 10, 220, 140), "Player Debug", GUI.skin.window);
+            GUILayout.Label($"IsBlocking: {_isBlocking}");
+            GUILayout.Label($"IsInParryWindow: {_isInParryWindow}");
+            GUILayout.Label($"ParryActivationCooldown: {_parryActivationTimer:F2}");
+            GUILayout.Label($"AttackCooldown: {_attackDelta:F2}");
+            GUILayout.Label($"ComboIndex: {_attackComboNum}");
+            GUILayout.Label($"RangedCooldown: {_rangedAttackDelta:F2}");
+            GUILayout.EndArea();
+        }
     }
 }

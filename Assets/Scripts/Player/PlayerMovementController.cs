@@ -1,4 +1,3 @@
-using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,16 +21,10 @@ namespace GEM
         [Tooltip("Dash distance of the character in meters")]
         public float dashDistance = 3.0f;
 
-        [Space(10)] [Tooltip("The height the player can jump")]
-        public float jumpHeight = 1.2f;
-
-        [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
+        [Space(10)] [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float gravity = -15.0f;
 
         [Space(10)]
-        [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
-        public float jumpTimeout = 0.50f;
-
         [Tooltip("Time required to pass before being able to dash again. Set to 0f to instantly dash")]
         public float dashTimeout = 0.50f;
 
@@ -66,7 +59,6 @@ namespace GEM
         private bool _isPerformingAction;
 
         // timeout delta-time
-        private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         private float _dashTimeoutDelta;
 
@@ -78,6 +70,8 @@ namespace GEM
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput;
+        private InputAction _moveAction;
+        private InputAction _dashAction;
 
 
         void Awake()
@@ -86,6 +80,13 @@ namespace GEM
             if (_mainCamera == null)
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            }
+            // cache actions once
+            if (playerInput != null)
+            {
+                var map = playerInput.currentActionMap;
+                _moveAction = map?.FindAction("Move") ?? playerInput.actions.FindAction("Move");
+                _dashAction = map?.FindAction("Dash") ?? playerInput.actions.FindAction("Dash");
             }
         }
 
@@ -96,15 +97,14 @@ namespace GEM
             _controller = GetComponent<CharacterController>();
 
             // reset our timeouts on start
-            _jumpTimeoutDelta = jumpTimeout;
             _fallTimeoutDelta = fallTimeout;
         }
 
         // Update is called once per frame
         void Update()
         {
-            JumpAndGravity();
             GroundedCheck();
+            ApplyGravity();
             Dash();
             Move();
         }
@@ -127,8 +127,7 @@ namespace GEM
                 return;
             }
 
-            var moveAction = playerInput.actions.FindAction("Move");
-            Vector2 moveInput = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+            Vector2 moveInput = _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
 
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = moveSpeed;
@@ -182,47 +181,23 @@ namespace GEM
             animationController?.SetSpeed(_animationBlend, inputMagnitude);
         }
 
-        private void JumpAndGravity()
+        private void ApplyGravity()
         {
             if (grounded)
             {
-                // reset the fall timeout timer
+                // reset the fall timeout timer and exit free fall when grounded
                 _fallTimeoutDelta = fallTimeout;
-
-                animationController?.SetJump(false);
                 animationController?.SetFreeFall(false);
 
-                // stop our velocity dropping infinitely when grounded
+                // small downward force to keep grounded contact
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -2f;
                 }
-
-                // Jump
-                var jumpAction = playerInput.actions.FindAction("Jump");
-                bool jumpInput = jumpAction != null && jumpAction.triggered;
-
-                if (jumpInput && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
-                    animationController?.SetJump(true);
-                    animationController?.TriggerJumpFeedback();
-                }
-
-                // jump timeout
-                if (_jumpTimeoutDelta >= 0.0f)
-                {
-                    _jumpTimeoutDelta -= Time.deltaTime;
-                }
             }
             else
             {
-                // reset the jump timeout timer
-                _jumpTimeoutDelta = jumpTimeout;
-
-                // fall timeout
+                // fall timeout while not grounded; after it elapses, set free fall
                 if (_fallTimeoutDelta >= 0.0f)
                 {
                     _fallTimeoutDelta -= Time.deltaTime;
@@ -233,7 +208,7 @@ namespace GEM
                 }
             }
 
-            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+            // apply gravity over time if under terminal velocity
             if (_verticalVelocity < _terminalVelocity)
             {
                 _verticalVelocity += gravity * Time.deltaTime;
@@ -273,14 +248,12 @@ namespace GEM
             }
 
             // Check for dash input (only when not dashing and cooldown is complete)
-            var dashAction = playerInput.actions.FindAction("Dash");
-            bool dashInput = dashAction != null && dashAction.triggered;
+            bool dashInput = _dashAction != null && _dashAction.triggered;
 
             if (dashInput && _dashTimeoutDelta <= 0.0f)
             {
                 // choose dash direction based on current move input and camera, fallback to forward
-                var moveAction = playerInput.actions.FindAction("Move");
-                Vector2 moveInput = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+                Vector2 moveInput = _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
 
                 if (moveInput != Vector2.zero)
                 {

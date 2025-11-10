@@ -6,7 +6,7 @@ namespace GEM
 {
     public class PlayerLookController : MonoBehaviour
     {
-        public Vector3 CurrentLookDirection { get; private set; }
+        public Vector3 CurrentAimDirection { get; private set; }
 
         [Header("References")]
         [SerializeField] private CinemachinePositionComposer cinemachinePositionComposer;
@@ -102,7 +102,8 @@ namespace GEM
             Vector3 cameraForward = mainCamera.transform.forward;
             cameraForward.y = 0f;
             Quaternion cameraRotation = Quaternion.LookRotation(cameraForward.normalized, Vector3.up);
-            CurrentLookDirection = cameraRotation * lookDirection.normalized;
+            Vector3 aimDirection = lookDirection + new Vector3(0, 1, 0); // this is incorrect
+            CurrentAimDirection = cameraRotation * aimDirection.normalized;
 
             // ok so this took a while
             // the position composer is based on the player transform so need to rotate the look direction to prevent its axis from rotating with the player
