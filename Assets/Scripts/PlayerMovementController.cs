@@ -87,6 +87,9 @@ public class PlayerMovementController : MonoBehaviour
 
     private bool _hasAnimator;
 
+    [Header("Input")]
+    [SerializeField] private PlayerInput playerInput;
+
 
     void Awake()
     {
@@ -147,7 +150,9 @@ public class PlayerMovementController : MonoBehaviour
     private void Move()
     {
         if (_isDashing) { return; }
-        Vector2 moveInput = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
+        var moveAction = playerInput.actions.FindAction("Move");
+        Vector2 moveInput = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+
         // set target speed based on move speed, sprint speed and if sprint is pressed
         float targetSpeed = moveSpeed;
 
@@ -240,12 +245,8 @@ public class PlayerMovementController : MonoBehaviour
                 }
 
                 // Jump
-                bool jumpInput = false;
-                var jumpAction = InputSystem.actions.FindAction("Jump");
-                if (jumpAction != null)
-                {
-                    jumpInput = jumpAction.triggered;
-                }
+                var jumpAction = playerInput.actions.FindAction("Jump");
+                bool jumpInput = jumpAction != null && jumpAction.triggered;
 
                 if (jumpInput && _jumpTimeoutDelta <= 0.0f)
                 {
@@ -331,17 +332,15 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         // Check for dash input (only when not dashing and cooldown is complete)
-        bool dashInput = false;
-        var dashAction = InputSystem.actions.FindAction("Dash");
-        if (dashAction != null)
-        {
-            dashInput = dashAction.triggered;
-        }
+        var dashAction = playerInput.actions.FindAction("Dash");
+        bool dashInput = dashAction != null && dashAction.triggered;
 
         if (dashInput && _dashTimeoutDelta <= 0.0f)
         {
             // choose dash direction based on current move input and camera, fallback to forward
-            Vector2 moveInput = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
+            var moveAction = playerInput.actions.FindAction("Move");
+            Vector2 moveInput = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+
             if (moveInput != Vector2.zero)
             {
                 Vector3 inputDir = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
