@@ -14,6 +14,7 @@ namespace GEM
         [SerializeField] private MMF_Player jumpFeedbacks;
         [SerializeField] private MMF_Player landFeedbacks;
         [SerializeField] private MMF_Player dashFeedbacks;
+        [SerializeField] private MMF_Player meleeFeedbacks;
 
         // animation IDs
         private int _animIDSpeed;
@@ -22,6 +23,8 @@ namespace GEM
         private int _animIDDash;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDAttack;
+        private int _animIDAttackIndex;
 
         private bool _hasAnimator;
 
@@ -44,6 +47,8 @@ namespace GEM
             _animIDDash = Animator.StringToHash("Dash");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDAttack = Animator.StringToHash("Attack");
+            _animIDAttackIndex = Animator.StringToHash("AttackIndex");
         }
 
         public void SetGrounded(bool grounded)
@@ -79,6 +84,14 @@ namespace GEM
             }
         }
 
+        public void PlayMelee(int stage)
+        {
+            if (!_hasAnimator) return;
+            animator.SetInteger(_animIDAttackIndex, stage);
+            animator.SetTrigger(_animIDAttack);
+            meleeFeedbacks?.PlayFeedbacks();
+        }
+
         public void TriggerJumpFeedback()
         {
             jumpFeedbacks?.PlayFeedbacks();
@@ -95,4 +108,3 @@ namespace GEM
         }
     }
 }
-

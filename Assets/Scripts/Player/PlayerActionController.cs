@@ -14,6 +14,7 @@ namespace GEM
         [Header("References")]
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerLookController playerLookController;
+        [SerializeField] private PlayerAnimationController playerAnimationController; // added for melee anims
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput; // required for reading melee attack input
@@ -122,6 +123,10 @@ namespace GEM
 
             // advance combo index (0,1,2) then wrap
             _attackComboNum++;
+
+            // trigger animation with current combo stage
+            int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
+            playerAnimationController?.PlayMelee(stage);
 
             // reset timers
             _attackDelta = meleeAttackCooldown * (1/baseMeleeAttackSpeed); // set cooldown before next attack allowed
