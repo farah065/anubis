@@ -2,16 +2,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace DefaultNamespace
+namespace GEM
 {
     public class PlayerLookController : MonoBehaviour
     {
-        public Vector3 CurrentLookDirection { get; private set; }
+        public Vector3 CurrentAimDirection { get; private set; }
 
         [Header("References")]
-        [SerializeField] private PlayerMovementController playerBody;
-        [SerializeField] private Camera mainCamera;
         [SerializeField] private CinemachinePositionComposer cinemachinePositionComposer;
+        private Camera mainCamera;
 
         [Header("Settings")]
         [SerializeField] private float lookMaxDistance = 5f;
@@ -23,14 +22,11 @@ namespace DefaultNamespace
 
         private void Awake()
         {
-            if (playerBody == null)
-            {
-                Debug.LogWarning("Player Movement Controller not assigned in player look controller.");
-                playerBody = FindFirstObjectByType<PlayerMovementController>();
-            }
+            mainCamera = playerInput.camera;
+
             if (mainCamera == null)
             {
-                Debug.LogWarning("Camera Transform not assigned in player look controller.");
+                Debug.LogWarning("Camera Transform not assigned in Player Input.");
                 mainCamera = Camera.main;
             }
             if (cinemachinePositionComposer == null)
@@ -102,14 +98,22 @@ namespace DefaultNamespace
                 normalizedMaxDistance = Mathf.Clamp01(distanceFromCenter / maxPossibleDistance) * lookMaxDistance;
             }
 
+            // remove camera tilt from look direction to pass to action controller
+            Vector3 cameraForward = mainCamera.transform.forward;
+            cameraForward.y = 0f;
+            Quaternion cameraRotation = Quaternion.LookRotation(cameraForward.normalized, Vector3.up);
+            Vector3 aimDirection = lookDirection + new Vector3(0, 1, 0); // this is incorrect
+            CurrentAimDirection = cameraRotation * aimDirection.normalized;
+
             // ok so this took a while
             // the position composer is based on the player transform so need to rotate the look direction to prevent its axis from rotating with the player
             // when we do this, it stops rotating with the player, but it moves along with world-space x-y axis
             // so now we need to rotate it based on the camera's rotation relative to the player
             // but we can't do two rotations sequentially, we have to calculate the needed rotation based on both transforms
-            float rotationDelta = mainCamera.transform.eulerAngles.y - playerBody.transform.eulerAngles.y;
+            float rotationDelta = Mathf.DeltaAngle(transform.eulerAngles.y, mainCamera.transform.eulerAngles.y);
             Quaternion relativeRotation = Quaternion.Euler(0f, rotationDelta, 0f);
             Vector3 worldLookDirection = relativeRotation * lookDirection;
+
 
             cinemachinePositionComposer.TargetOffset = worldLookDirection * normalizedMaxDistance;
         }
