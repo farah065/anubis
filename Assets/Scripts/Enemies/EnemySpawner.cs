@@ -31,9 +31,10 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private void OnGet(Mummy enemy)
     {
-        enemy.gameObject.SetActive(true);
         Transform randomSpawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
         enemy.transform.position = randomSpawnPoint.position;
+        enemy.gameObject.SetActive(true);
+        enemy.InitialPosition = randomSpawnPoint.position;
     }
 
     private void OnRelease(Mummy enemy)

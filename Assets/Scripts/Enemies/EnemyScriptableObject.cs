@@ -13,4 +13,5 @@ public class EnemyScriptableObject : ScriptableObject
     public float Damage;
     public float DetectionRange;
     public float AttackRange;
+    public float PatrolRadius;
 }

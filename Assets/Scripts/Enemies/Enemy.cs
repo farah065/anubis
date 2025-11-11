@@ -2,54 +2,49 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum EnemyState
+{
+    Patrolling,
+    Waiting,
+    Following,
+    Attacking,
+    Dying
+}
+
 public abstract class Enemy : MonoBehaviour
 {
+    public NavMeshAgent Agent;
+    public Animator Animator;
+    [HideInInspector] public Vector3 InitialPosition;
+
     [SerializeField] protected EnemyScriptableObject _enemyData;
-    [SerializeField] public NavMeshAgent _agent;
-    [SerializeField] public Animator _animator;
+    [SerializeField] protected EnemyState _currentState;
 
     protected GameObject _target;
     protected float _currentHp;
-    protected Vector3 _initialPosition;
 
     protected void OnEnable()
     {
         Initialise();
+        StartCoroutine(PatrolRoutine());
     }
 
     protected void Update()
     {
-        if (_target != null)
+        if (_currentState == EnemyState.Following && _target != null)
         {
-            _agent.SetDestination(_target.transform.position);
+            Agent.SetDestination(_target.transform.position);
         }
 
-        if (_agent.hasPath)
+        float targetSpeed = 0f;
+        if (Agent.hasPath && Agent.remainingDistance > Agent.stoppingDistance)
         {
-            // rotate towards target direction
-            Vector3 direction = _agent.steeringTarget - transform.position;
-            direction.y = 0;
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _enemyData.AngularSpeed);
-            }
-
-            // set speed parameter for animator to start walking animation
-            _animator.SetFloat("speed", _agent.speed);
+            targetSpeed = _currentState == EnemyState.Following ? _enemyData.FollowSpeed : _enemyData.PatrolSpeed;
         }
 
-        //if (_agent.remainingDistance <= _agent.stoppingDistance) //done with path
-        //{
-        //    Vector3 point;
-        //    if (RandomPoint(_initialPosition, 10, out point)) //pass in our centre point and radius of area
-        //    {
-        //        Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f); //so you can see with gizmos
-        //        _agent.SetDestination(point);
-        //    }
-        //}
+        Agent.speed = Mathf.MoveTowards(Agent.speed, targetSpeed, Agent.acceleration * Time.deltaTime);
 
-        //_animator.SetFloat("speed", _agent.velocity.magnitude);
+        Animator.SetFloat("speed", Agent.speed);
     }
 
     protected void OnTriggerEnter(Collider other)
@@ -57,6 +52,7 @@ public abstract class Enemy : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             _target = other.gameObject;
+            _currentState = EnemyState.Following;
         }
     }
 
@@ -67,40 +63,80 @@ public abstract class Enemy : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _enemyData.AttackRange);
 
-        if (_agent.hasPath)
+        if (Agent.hasPath)
         {
-            for (int i = 0; i < _agent.path.corners.Length - 1; i++)
+            for (int i = 0; i < Agent.path.corners.Length - 1; i++)
             {
-                Debug.DrawLine(_agent.path.corners[i], _agent.path.corners[i + 1], Color.blue);
+                Debug.DrawLine(Agent.path.corners[i], Agent.path.corners[i + 1], Color.blue);
             }
         }
     }
 
     protected void Initialise()
     {
-        //_agent.speed = _enemyData.FollowSpeed;
-        //_agent.speed = _enemyData.PatrolSpeed;
-        //_agent.angularSpeed = _enemyData.AngularSpeed;
-        //_agent.acceleration = _enemyData.Acceleration;
-        //_agent.stoppingDistance = _enemyData.StoppingDistance;
+        Agent.speed = _enemyData.FollowSpeed;
+        Agent.speed = _enemyData.PatrolSpeed;
+        Agent.angularSpeed = _enemyData.AngularSpeed;
+        Agent.acceleration = _enemyData.Acceleration;
+        Agent.stoppingDistance = _enemyData.StoppingDistance;
 
         _currentHp = _enemyData.MaxHp;
-        _initialPosition = transform.position;
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
+        Vector3 randomPoint = center + Random.insideUnitSphere * range;
 
-        Vector3 randomPoint = center + Random.insideUnitSphere * range; // random point in a sphere 
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, 5f, NavMesh.AllAreas))
+        for (int i = 0; i < 30; i++)
         {
-            result = hit.position;
-            return true;
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                // Check that the hit point is still within the patrol radius
+                if (Vector3.Distance(center, hit.position) <= range)
+                {
+                    result = hit.position;
+                    return true;
+                }
+            }
         }
 
-        result = Vector3.zero;
+        result = center;
         return false;
+    }
+
+    protected void Patrol()
+    {
+        Debug.Log("PATROL");
+        // pick a random point on the navmesh within patrol radius
+        Vector3 point;
+        if (RandomPoint(InitialPosition, _enemyData.PatrolRadius, out point))
+        {
+            Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f); //so you can see with gizmos
+            Agent.SetDestination(point);
+        }
+    }
+
+    private IEnumerator PatrolRoutine()
+    {
+        _currentState = EnemyState.Patrolling;
+        bool _isWaiting = false;
+
+        while (_currentState == EnemyState.Patrolling)
+        {
+            if (!_isWaiting)
+            {
+                Patrol();
+                _isWaiting = true;
+            }
+
+            // Wait until the agent reaches destination
+            yield return new WaitUntil(() => !Agent.pathPending && Agent.remainingDistance <= Agent.stoppingDistance);
+
+            // Wait a bit at the patrol point
+            yield return new WaitForSeconds(Random.Range(1f, 3f));
+
+            _isWaiting = false;
+        }
     }
 
     protected void TakeDamage(float damage)

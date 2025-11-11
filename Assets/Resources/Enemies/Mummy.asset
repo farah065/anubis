@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Mummy
   m_EditorClassIdentifier: 
   FollowSpeed: 3.5
-  PatrolSpeed: 1
-  AngularSpeed: 120
+  PatrolSpeed: 2
+  AngularSpeed: 330
   Acceleration: 8
   StoppingDistance: 1.8
   MaxHp: 20
   Damage: 5
   DetectionRange: 3
   AttackRange: 1
+  PatrolRadius: 3

@@ -6,25 +6,25 @@ public class AnimationController : MonoBehaviour
 
     private void Awake()
     {
-        _enemy._animator.applyRootMotion = true;
-        _enemy._agent.updatePosition = false;
-        _enemy._agent.updateRotation = true;
+        _enemy.Animator.applyRootMotion = true;
+        _enemy.Agent.updatePosition = false;
+        _enemy.Agent.updateRotation = true;
     }
 
     private void OnAnimatorMove()
     {
-        // Root motion delta (how far the animation moved this frame)
-        Vector3 rootDelta = _enemy._animator.deltaPosition;
+        // root motion delta (how far the animation moved this frame)
+        Vector3 rootDelta = _enemy.Animator.deltaPosition;
 
-        // Apply root motion to the parent transform
+        // apply root motion to the parent transform
         _enemy.transform.position += rootDelta;
 
-        // Keep agent height consistent with navmesh
+        // keep agent height consistent with navmesh
         Vector3 pos = _enemy.transform.position;
-        pos.y = _enemy._agent.nextPosition.y;
+        pos.y = _enemy.Agent.nextPosition.y;
         _enemy.transform.position = pos;
 
         // update agent position to match
-        _enemy._agent.nextPosition = _enemy.transform.position;
+        _enemy.Agent.nextPosition = pos;
     }
 }
