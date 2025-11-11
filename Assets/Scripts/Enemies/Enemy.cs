@@ -19,6 +19,7 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
     [SerializeField] protected EnemyState _currentState;
+    [SerializeField] protected SphereCollider _detectionCollider;
 
     protected GameObject _target;
     protected float _currentHp;
@@ -51,8 +52,19 @@ public abstract class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            _target = other.gameObject;
-            _currentState = EnemyState.Following;
+            // raycast to check line of sight
+            Vector3 dir = (other.transform.position - transform.position).normalized;
+            Ray ray = new Ray(transform.position + Vector3.up * 1.4f, new Vector3(dir.x, 0, dir.z));
+            Debug.DrawRay(ray.origin, ray.direction * _enemyData.DetectionRange, Color.red, 1.0f);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.DetectionRange))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    _target = other.gameObject;
+                    _currentState = EnemyState.Following;
+                }
+            }
         }
     }
 
@@ -81,6 +93,7 @@ public abstract class Enemy : MonoBehaviour
         Agent.stoppingDistance = _enemyData.StoppingDistance;
 
         _currentHp = _enemyData.MaxHp;
+        _detectionCollider.radius = _enemyData.DetectionRange;
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -106,7 +119,6 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Patrol()
     {
-        Debug.Log("PATROL");
         // pick a random point on the navmesh within patrol radius
         Vector3 point;
         if (RandomPoint(InitialPosition, _enemyData.PatrolRadius, out point))

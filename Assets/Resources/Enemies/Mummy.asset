@@ -19,6 +19,6 @@ MonoBehaviour:
   StoppingDistance: 1.8
   MaxHp: 20
   Damage: 5
-  DetectionRange: 3
+  DetectionRange: 10
   AttackRange: 1
-  PatrolRadius: 3
+  PatrolRadius: 5
