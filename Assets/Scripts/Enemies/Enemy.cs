@@ -17,14 +17,6 @@ public abstract class Enemy : MonoBehaviour
         Initialise();
     }
 
-    private void OnAnimatorMove()
-    {
-        Debug.Log("OnAnimatorMove called");
-        Vector3 rootPosition = _animator.rootPosition;
-        rootPosition.y = _agent.nextPosition.y;
-        rootPosition = transform.TransformPoint(rootPosition);
-    }
-
     protected void Update()
     {
         if (_target != null)

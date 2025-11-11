@@ -3,6 +3,7 @@ using UnityEngine;
 public class AnimationController : MonoBehaviour
 {
     [SerializeField] private Enemy _enemy;
+
     private void Awake()
     {
         _enemy._animator.applyRootMotion = true;
@@ -12,9 +13,6 @@ public class AnimationController : MonoBehaviour
 
     private void OnAnimatorMove()
     {
-        //Vector3 rootPosition = _enemy._animator.rootPosition;
-        //rootPosition.y = _enemy._agent.nextPosition.y;
-
         // Root motion delta (how far the animation moved this frame)
         Vector3 rootDelta = _enemy._animator.deltaPosition;
 

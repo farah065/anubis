@@ -3,16 +3,16 @@ using UnityEngine.Pool;
 
 public class Mummy : Enemy
 {
-    private IObjectPool<Mummy> _zombiePool;
+    private IObjectPool<Mummy> _mummyPool;
 
     protected override void Die()
     {
         base.Die();
-        _zombiePool.Release(this);
+        _mummyPool.Release(this);
     }
 
     public void SetPool(IObjectPool<Mummy> pool)
     {
-        _zombiePool = pool;
+        _mummyPool = pool;
     }
 }
