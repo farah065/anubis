@@ -16,9 +16,10 @@ MonoBehaviour:
   PatrolSpeed: 2
   AngularSpeed: 330
   Acceleration: 8
-  StoppingDistance: 1.8
+  StoppingDistance: 1
   MaxHp: 20
   Damage: 5
-  DetectionRange: 10
-  AttackRange: 1
+  AttackCooldown: 3
+  PlayerDetectionRadius: 10
+  AttackZoneRadius: 1.2
   PatrolRadius: 5

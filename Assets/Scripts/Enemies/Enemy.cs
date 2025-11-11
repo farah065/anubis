@@ -5,7 +5,6 @@ using UnityEngine.AI;
 public enum EnemyState
 {
     Patrolling,
-    Waiting,
     Following,
     Attacking,
     Dying
@@ -21,7 +20,7 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] protected EnemyState _currentState;
     [SerializeField] protected SphereCollider _detectionCollider;
 
-    protected GameObject _target;
+    protected GameObject _targetGameObj;
     protected float _currentHp;
 
     protected void OnEnable()
@@ -32,9 +31,9 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        if (_currentState == EnemyState.Following && _target != null)
+        if (_currentState == EnemyState.Following && _targetGameObj != null)
         {
-            Agent.SetDestination(_target.transform.position);
+            Agent.SetDestination(_targetGameObj.transform.position);
         }
 
         float targetSpeed = 0f;
@@ -46,6 +45,16 @@ public abstract class Enemy : MonoBehaviour
         Agent.speed = Mathf.MoveTowards(Agent.speed, targetSpeed, Agent.acceleration * Time.deltaTime);
 
         Animator.SetFloat("speed", Agent.speed);
+
+        // Check for attack range
+        if (_currentState == EnemyState.Following && _targetGameObj != null)
+        {
+            float distanceToTarget = Vector3.Distance(transform.position, _targetGameObj.transform.position);
+            if (distanceToTarget <= _enemyData.AttackZoneRadius)
+            {
+                Attack();
+            }
+        }
     }
 
     protected void OnTriggerEnter(Collider other)
@@ -55,13 +64,13 @@ public abstract class Enemy : MonoBehaviour
             // raycast to check line of sight
             Vector3 dir = (other.transform.position - transform.position).normalized;
             Ray ray = new Ray(transform.position + Vector3.up * 1.3f, new Vector3(dir.x, 0, dir.z));
-            Debug.DrawRay(ray.origin, ray.direction * _enemyData.DetectionRange, Color.red, 1.0f);
+            Debug.DrawRay(ray.origin, ray.direction * _enemyData.PlayerDetectionRadius, Color.red, 1.0f);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.DetectionRange))
+            if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.PlayerDetectionRadius))
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    _target = other.gameObject;
+                    _targetGameObj = other.gameObject;
                     _currentState = EnemyState.Following;
                 }
             }
@@ -77,13 +86,13 @@ public abstract class Enemy : MonoBehaviour
                 // raycast to check line of sight
                 Vector3 dir = (other.transform.position - transform.position).normalized;
                 Ray ray = new Ray(transform.position + Vector3.up * 1.4f, new Vector3(dir.x, 0, dir.z));
-                Debug.DrawRay(ray.origin, ray.direction * _enemyData.DetectionRange, Color.red, 1.0f);
+                Debug.DrawRay(ray.origin, ray.direction * _enemyData.PlayerDetectionRadius, Color.red, 1.0f);
 
-                if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.DetectionRange))
+                if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.PlayerDetectionRadius))
                 {
                     if (hit.collider.CompareTag("Player"))
                     {
-                        _target = other.gameObject;
+                        _targetGameObj = other.gameObject;
                         _currentState = EnemyState.Following;
                     }
                 }
@@ -94,9 +103,9 @@ public abstract class Enemy : MonoBehaviour
     protected void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _enemyData.DetectionRange);
+        Gizmos.DrawWireSphere(transform.position, _enemyData.PlayerDetectionRadius);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _enemyData.AttackRange);
+        Gizmos.DrawWireSphere(transform.position, _enemyData.AttackZoneRadius);
 
         if (Agent.hasPath)
         {
@@ -116,7 +125,7 @@ public abstract class Enemy : MonoBehaviour
         Agent.stoppingDistance = _enemyData.StoppingDistance;
 
         _currentHp = _enemyData.MaxHp;
-        _detectionCollider.radius = _enemyData.DetectionRange;
+        _detectionCollider.radius = _enemyData.PlayerDetectionRadius;
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -185,7 +194,15 @@ public abstract class Enemy : MonoBehaviour
     }
     protected virtual void Attack()
     {
+        Animator.SetTrigger("attack");
+        _currentState = EnemyState.Attacking;
+        StartCoroutine(AttackCoroutine());
+    }
 
+    protected IEnumerator AttackCoroutine()
+    {
+        yield return new WaitForSeconds(_enemyData.AttackCooldown);
+        _currentState = EnemyState.Following;
     }
 
     protected virtual void Die()
