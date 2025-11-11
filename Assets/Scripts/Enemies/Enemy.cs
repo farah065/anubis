@@ -54,7 +54,7 @@ public abstract class Enemy : MonoBehaviour
         {
             // raycast to check line of sight
             Vector3 dir = (other.transform.position - transform.position).normalized;
-            Ray ray = new Ray(transform.position + Vector3.up * 1.4f, new Vector3(dir.x, 0, dir.z));
+            Ray ray = new Ray(transform.position + Vector3.up * 1.3f, new Vector3(dir.x, 0, dir.z));
             Debug.DrawRay(ray.origin, ray.direction * _enemyData.DetectionRange, Color.red, 1.0f);
 
             if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.DetectionRange))
@@ -63,6 +63,29 @@ public abstract class Enemy : MonoBehaviour
                 {
                     _target = other.gameObject;
                     _currentState = EnemyState.Following;
+                }
+            }
+        }
+    }
+
+    protected void OnTriggerStay(Collider other)
+    {
+        if (_currentState != EnemyState.Following)
+        {
+            if (other.CompareTag("Player"))
+            {
+                // raycast to check line of sight
+                Vector3 dir = (other.transform.position - transform.position).normalized;
+                Ray ray = new Ray(transform.position + Vector3.up * 1.4f, new Vector3(dir.x, 0, dir.z));
+                Debug.DrawRay(ray.origin, ray.direction * _enemyData.DetectionRange, Color.red, 1.0f);
+
+                if (Physics.Raycast(ray, out RaycastHit hit, _enemyData.DetectionRange))
+                {
+                    if (hit.collider.CompareTag("Player"))
+                    {
+                        _target = other.gameObject;
+                        _currentState = EnemyState.Following;
+                    }
                 }
             }
         }
