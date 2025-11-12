@@ -99,7 +99,7 @@ namespace GEM
 
         private void MeleeAttack()
         {
-            Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
+            Debug.Log($"ComboNum: {_attackComboNum}, AttackDelta: {_attackDelta:F2}, ComboDelta: {_attackComboDelta:F2}");
 
             // decrement timers each frame
             if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
@@ -155,12 +155,13 @@ namespace GEM
                 }
             }
 
-            // advance combo index (0,1,2) then wrap
-            _attackComboNum++;
-
-            // trigger animation with current combo stage
+            // trigger animation with CURRENT combo stage (before incrementing)
             int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
             playerAnimationController?.SetMelee(stage);
+
+            // NOW advance combo index for next attack
+            _attackComboNum++;
+            if (_attackComboNum >= MAX_COMBO) _attackComboNum = 0; // wrap back to 0
 
             // reset timers
             _attackDelta = meleeAttackCooldown * (1/baseMeleeAttackSpeed); // set cooldown before next attack allowed
