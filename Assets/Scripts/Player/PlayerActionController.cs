@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -99,7 +99,7 @@ namespace GEM
 
         private void MeleeAttack()
         {
-            Debug.Log($"ComboNum: {_attackComboNum}, AttackDelta: {_attackDelta:F2}, ComboDelta: {_attackComboDelta:F2}");
+            Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
 
             // decrement timers each frame
             if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
@@ -108,8 +108,12 @@ namespace GEM
                 _attackComboDelta -= Time.deltaTime;
                 if (_attackComboDelta <= 0f)
                 {
-                    // combo window expired
-                    _attackComboNum = 0;
+                    // combo window expired - reset ONLY if not already at 0
+                    if (_attackComboNum > 0)
+                    {
+                        _attackComboNum = 0;
+                        playerAnimationController.SetMelee(-1); // Set Attack = false
+                    }
                 }
             }
 
@@ -122,7 +126,7 @@ namespace GEM
                 playerAnimationController.SetMelee(-1);
                 return;
             }
-            if (_attackComboDelta > 0f && _attackComboNum == MAX_COMBO) return;
+            if ( _attackComboNum >= MAX_COMBO) return;
 
             // execute attack
             playerMovementController?.SetIsPerformingAction(true);
@@ -155,17 +159,18 @@ namespace GEM
                 }
             }
 
-            // trigger animation with CURRENT combo stage (before incrementing)
+            // trigger animation with current combo stage
             int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
             playerAnimationController?.SetMelee(stage);
 
-            // NOW advance combo index for next attack
+            // advance combo index (0,1,2) then wrap
             _attackComboNum++;
-            if (_attackComboNum >= MAX_COMBO) _attackComboNum = 0; // wrap back to 0
+
+            
 
             // reset timers
-            _attackDelta = meleeAttackCooldown * (1/baseMeleeAttackSpeed); // set cooldown before next attack allowed
-            _attackComboDelta = comboResetTime * (1/baseMeleeAttackSpeed); // refresh combo window
+            _attackDelta = meleeAttackCooldown * (1 / baseMeleeAttackSpeed); // set cooldown before next attack allowed
+            _attackComboDelta = comboResetTime * (1 / baseMeleeAttackSpeed); // refresh combo window
 
             playerMovementController?.SetIsPerformingAction(false);
         }
@@ -174,30 +179,30 @@ namespace GEM
         {
             if (_rangedAttackDelta > 0f) _rangedAttackDelta -= Time.deltaTime;
             bool rangedTriggered = _rangedAction != null && _rangedAction.WasPerformedThisFrame();
-             if (!rangedTriggered || _rangedAttackDelta > 0f) return;
+            if (!rangedTriggered || _rangedAttackDelta > 0f) return;
 
-             //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
-             playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+            //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
+            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
 
-             // instantiate projectile if prefab assigned
-             if (projectilePrefab != null)
-             {
-                 Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
-                 Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
-                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
-                 var proj = go.GetComponent<PlayerProjectile>();
-                 if (proj != null)
-                 {
-                     proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
-                 }
-             }
-             else
-             {
-                 Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
-             }
+            // instantiate projectile if prefab assigned
+            if (projectilePrefab != null)
+            {
+                Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
+                Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
+                var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
+                var proj = go.GetComponent<PlayerProjectile>();
+                if (proj != null)
+                {
+                    proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
+            }
 
-             _rangedAttackDelta = rangedAttackCooldown; // start cooldown
-         }
+            _rangedAttackDelta = rangedAttackCooldown; // start cooldown
+        }
 
         private void Block()
         {
@@ -256,7 +261,7 @@ namespace GEM
             }
 
             _wasBlocking = blockHeld;
-         }
+        }
 
         private void OnAttackAnimationEnded()
         {
@@ -270,7 +275,7 @@ namespace GEM
             Vector3 origin = transform.position + Vector3.up;
             Vector3 forward = transform.forward;
 
-            if (_attackDelta > 0|| _attackComboDelta > 0)
+            if (_attackDelta > 0 || _attackComboDelta > 0)
             {
                 //transparent red when on cooldown
                 Handles.color = new Color(1f, 0f, 0f, 0.3f);
@@ -279,7 +284,7 @@ namespace GEM
             {
                 Handles.color = new Color(0f, 1f, 0f, 0.3f);
             }
-            Handles.DrawSolidArc(origin, Vector3.up, Quaternion.Euler(0, -attackAngle/2, 0) * forward, attackAngle, attackRange);
+            Handles.DrawSolidArc(origin, Vector3.up, Quaternion.Euler(0, -attackAngle / 2, 0) * forward, attackAngle, attackRange);
         }
 
         private void OnGUI()

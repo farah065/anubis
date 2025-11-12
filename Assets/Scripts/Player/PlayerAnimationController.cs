@@ -27,30 +27,6 @@ namespace GEM
 
         private bool _hasAnimator;
 
-        private void Update()
-        {
-            if (_hasAnimator && Input.GetKeyDown(KeyCode.Space)) // Press space to check current state
-            {
-                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
-
-                Debug.Log($"=== ANIMATOR STATE ===");
-                Debug.Log($"Current State: {stateInfo.fullPathHash}");
-                Debug.Log($"Is In Transition: {animator.IsInTransition(0)}");
-                Debug.Log($"Attack Bool: {animator.GetBool(_animIDAttack)}");
-                Debug.Log($"AttackIndex Int: {animator.GetInteger(_animIDAttackIndex)}");
-
-                if (clipInfo.Length > 0)
-                {
-                    Debug.Log($"Playing Clip: {clipInfo[0].clip.name}");
-                }
-                else
-                {
-                    Debug.Log("NO CLIP PLAYING!");
-                }
-            }
-        }
-
         private void Awake()
         {
             if (animator == null)
@@ -109,19 +85,14 @@ namespace GEM
 
         public void SetMelee(int stage)
         {
-            Debug.Log($"[SetMelee] Called with stage: {stage}, Current AttackIndex: {animator.GetInteger(_animIDAttackIndex)}, Current Attack Bool: {animator.GetBool(_animIDAttack)}");
-
             if (stage == -1)
             {
                 animator.SetBool(_animIDAttack, false);
-                Debug.Log("[SetMelee] Set Attack to FALSE");
                 return;
             }
             if (!_hasAnimator) return;
-
             animator.SetInteger(_animIDAttackIndex, stage);
             animator.SetBool(_animIDAttack, true);
-            Debug.Log($"[SetMelee] Set AttackIndex to {stage} and Attack to TRUE");
             meleeFeedbacks?.PlayFeedbacks();
         }
 
