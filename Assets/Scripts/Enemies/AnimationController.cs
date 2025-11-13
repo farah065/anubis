@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Handles applying root motion from animations to the enemy's transform and navmesh agent.
+/// Should be attached to the same game object that has the animator.
+/// </summary>
 public class AnimationController : MonoBehaviour
 {
     [SerializeField] private Enemy _enemy;

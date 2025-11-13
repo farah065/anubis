@@ -1,97 +1,118 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class EnemySpawner : Singleton<EnemySpawner>
 {
     [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private Mummy _mummyPrefab;
-    private IObjectPool<Mummy> _mummyPool;
 
+    [Header("Mummy Settings")]
+    [SerializeField] private Mummy _mummyPrefab;
     [SerializeField] private float _spawnRadius = 2f;  // radius around spawn point
     [SerializeField] private int _minEnemies = 2;
     [SerializeField] private int _maxEnemies = 5;
     [SerializeField] private float _minDistanceBetweenEnemies = 1f; // min spacing to prevent overlap
 
+    [Header("Debug")]
+    [SerializeField] private bool _isManualSpawningEnabled = false;
+
+    private IObjectPool<Mummy> _mummyPool;
+
+    #region monobehaviour methods
     public override void Awake()
     {
         base.Awake();
-        _mummyPool = new ObjectPool<Mummy>(CreateEnemy, OnGet, OnRelease);
+        // create enemy pools
+        _mummyPool = new ObjectPool<Mummy>(CreateMummy, OnGetMummy, OnReleaseMummy);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        // only for testing purposes
+        if (Input.GetKeyDown(KeyCode.Z) && _isManualSpawningEnabled)
         {
-            SpawnZombies();
+            SpawnMummies();
         }
     }
+    #endregion
 
-    private Mummy CreateEnemy()
+    #region private methods
+    #region mummies
+    private Mummy CreateMummy()
     {
         Mummy enemy = Instantiate(_mummyPrefab);
         enemy.SetPool(_mummyPool);
         return enemy;
     }
 
-    private void OnGet(Mummy enemy)
+    private void OnGetMummy(Mummy enemy)
     {
         enemy.gameObject.SetActive(true);
     }
 
-    private void OnRelease(Mummy enemy)
+    private void OnReleaseMummy(Mummy enemy)
     {
         enemy.gameObject.SetActive(false);
     }
 
-    public void SpawnZombies()
+    private void SpawnMummies()
     {
-        // pick a random spawn point
+        // get a random spawn point and enemy count
         Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
-
-        // pick a random number of enemies
         int enemyCount = Random.Range(_minEnemies, _maxEnemies + 1);
 
-        // keep track of already placed enemy positions
+        // keep track of spawned positions to avoid overlap
         List<Vector3> spawnedPositions = new List<Vector3>();
-
-        for (int i = 0; i < enemyCount; i++)
+        int i = 0;
+        while (i < enemyCount)
         {
-            Vector3 spawnPos = GetValidSpawnPosition(spawnPoint.position, spawnedPositions);
-            Mummy enemy = _mummyPool.Get();
-            enemy.transform.position = spawnPos;
-            enemy.InitialPosition = spawnPos;
-
-            spawnedPositions.Add(spawnPos);
+            if (TryGetValidSpawnPosition(spawnPoint.position, spawnedPositions, _minDistanceBetweenEnemies, out Vector3 spawnPos))
+            {
+                Mummy enemy = _mummyPool.Get();
+                enemy.transform.position = spawnPos;
+                enemy.InitialPosition = spawnPos;
+                spawnedPositions.Add(spawnPos);
+                i++;
+            }
         }
     }
+    #endregion
 
-    private Vector3 GetValidSpawnPosition(Vector3 center, List<Vector3> existingPositions)
+    private bool TryGetValidSpawnPosition(Vector3 center, List<Vector3> existingPositions, float minDistanceBetweenEnemies, out Vector3 validPosition)
     {
-        const int maxAttempts = 20;
+        validPosition = center;
 
-        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        for (int attempt = 0; attempt < 20; attempt++)
         {
-            // pick a random point within the spawn radius
             Vector2 offset = Random.insideUnitCircle * _spawnRadius;
             Vector3 candidate = center + new Vector3(offset.x, 0f, offset.y);
 
-            // check distance from existing enemies
-            bool tooClose = false;
-            foreach (var pos in existingPositions)
+            // get closest point on navmesh
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
-                if (Vector3.Distance(candidate, pos) < _minDistanceBetweenEnemies)
+                Vector3 navPos = hit.position;
+
+                // check distance from other spawned enemies
+                bool tooClose = false;
+                foreach (var pos in existingPositions)
                 {
-                    tooClose = true;
-                    break;
+                    if (Vector3.Distance(navPos, pos) < minDistanceBetweenEnemies)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose)
+                {
+                    validPosition = navPos;
+                    return true;
                 }
             }
-
-            if (!tooClose)
-                return candidate;
         }
 
-        // if we can't find a good spot, just return the center
-        return center;
+        return false;
     }
+    #endregion
 }
