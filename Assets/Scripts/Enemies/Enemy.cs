@@ -6,7 +6,6 @@ public enum EnemyState
 {
     Patrolling,
     Following,
-    Attacking,
     Dying
 }
 
@@ -22,6 +21,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
+    protected bool _canAttack = true;
 
     protected void OnEnable()
     {
@@ -47,7 +47,7 @@ public abstract class Enemy : MonoBehaviour
         Animator.SetFloat("speed", Agent.speed);
 
         // Check for attack range
-        if (_currentState == EnemyState.Following && _targetGameObj != null)
+        if (_currentState == EnemyState.Following && _targetGameObj != null && _canAttack)
         {
             float distanceToTarget = Vector3.Distance(transform.position, _targetGameObj.transform.position);
             if (distanceToTarget <= _enemyData.AttackZoneRadius)
@@ -195,14 +195,14 @@ public abstract class Enemy : MonoBehaviour
     protected virtual void Attack()
     {
         Animator.SetTrigger("attack");
-        _currentState = EnemyState.Attacking;
         StartCoroutine(AttackCoroutine());
     }
 
     protected IEnumerator AttackCoroutine()
     {
+        _canAttack = false;
         yield return new WaitForSeconds(_enemyData.AttackCooldown);
-        _currentState = EnemyState.Following;
+        _canAttack = true;
     }
 
     protected virtual void Die()
