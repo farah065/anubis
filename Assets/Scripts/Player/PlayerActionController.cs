@@ -275,8 +275,9 @@ namespace GEM
                 clicks = 0;
                 anim.SetInteger("AttackIndex", 0);
                 anim.SetBool("ReturnToIdle", true);
+                playerMovementController?.SetIsPerformingAction(false);
             }
-            if(_meleeAction != null && _meleeAction.WasPerformedThisFrame())
+            if (_meleeAction != null && _meleeAction.WasPerformedThisFrame())
             {
                 Debug.Log("Click");
                 
@@ -298,6 +299,7 @@ namespace GEM
                 playerMovementController?.SetIsPerformingAction(true);
                 playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
                 attackVector();
+                //animator params
                 Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", 1);
@@ -319,12 +321,13 @@ namespace GEM
 
             if (targetStep> currentStep && (Time.time - lastClickedTime)<= maxComboDelay)
             {
-                anim.SetBool("ReturnToIdle", false);
                 int nextStep = currentStep + 1;
                 nextStep = Mathf.Clamp(nextStep, 1, 3);
                 playerMovementController?.SetIsPerformingAction(true);
                 playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                //anim params
                 attackVector();
+                anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", nextStep);
                 anim.SetTrigger("Attack"); // plays next clip
                 Debug.Log($"Chaining to next attack: {nextStep}");
@@ -336,6 +339,7 @@ namespace GEM
             anim.SetInteger("AttackIndex", 0);
             anim.SetBool("ReturnToIdle", true);
             Debug.Log("Combo Ended");
+            playerMovementController?.SetIsPerformingAction(false);
         }
 
 
