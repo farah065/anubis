@@ -99,7 +99,7 @@ namespace GEM
 
         private void MeleeAttack()
         {
-            Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
+            //Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
 
             // decrement timers each frame
             if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
