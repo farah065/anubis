@@ -8,6 +8,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Levels/Cooldown Room.unity
+    guid: c53519b73c060aa4d83786ed12bf0490
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 1.unity
+    guid: 4e95d0683f57850498ada01ada41d9b1
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 2.unity
+    guid: e7557b16dd197d941b6125e411161843
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 3.unity
+    guid: 874a0964b4fc47f4298f4916b43c838f
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level 4.unity
+    guid: 15915b31f50a95647a3c4ae71d00608b
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 17f9ba68a369371498f0ed58d5af5668, type: 3}
