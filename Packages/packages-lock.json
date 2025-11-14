@@ -38,7 +38,7 @@
     },
     "com.unity.collections": {
       "version": "2.5.1",
-      "depth": 0,
+      "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.burst": "1.8.17",
@@ -50,12 +50,12 @@
     },
     "com.unity.ext.nunit": {
       "version": "2.0.5",
-      "depth": 0,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },
     "com.unity.ide.rider": {
-      "version": "3.0.38",
+      "version": "3.0.37",
       "depth": 0,
       "source": "registry",
       "dependencies": {
