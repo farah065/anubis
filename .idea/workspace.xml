@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4f50b433-b529-4059-a6b8-b5ec095caf45" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyAttack.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyAttack.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyIdle.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyIdle.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyRun.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyRun.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyWalk.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Mummy/MummyWalk.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Player.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Controllers.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Controllers/MummyController.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Controllers/MummyController.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Blue.mat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Blue.mat.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Green.mat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Green.mat.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Red.mat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Materials/Testing/Red.mat.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Art/Textures.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Materials.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/Mummy.prefab" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/Mummy.prefab.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Resources/Enemies.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Resources/Enemies/Mummy.asset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Resources/Enemies/Mummy.asset.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/Farah.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/Farah/NavMesh-NavMesh.asset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/Farah/NavMesh-NavMesh.asset.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/Testing/EnemyTesting.unity" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/Testing/EnemyTesting.unity.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AnimationController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AnimationController.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AnimationEvents.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AnimationEvents.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AttackZone.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/AttackZone.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyScriptableObject.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyScriptableObject.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemySpawner.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemySpawner.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Mummy.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Mummy.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Testing/TestPlayer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Testing/TestPlayer.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Dive Roll.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Player/Dive Roll.fbx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Dive Roll.fbx.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Clips/Player/Dive Roll.fbx.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/PlayerAnimator.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Controllers/PlayerAnimator.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/PlayerAnimator.controller.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Controllers/PlayerAnimator.controller.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Models/Enemies.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Models/Enemies.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utilities.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/DefaultVolumeProfile.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/DefaultVolumeProfile.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/PackageManagerSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/PackageManagerSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="35J7cokB2mNIy5b7skPFqF99e3C" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Merging feature/character-models",
+    "kotlin-language-version-configured": "true",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4f50b433-b529-4059-a6b8-b5ec095caf45" name="Changes" comment="" />
+      <created>1762816403337</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762816403337</updated>
+      <workItem from="1762816405314" duration="28000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
