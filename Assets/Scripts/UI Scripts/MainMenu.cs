@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 using Image = UnityEngine.UI.Image;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
@@ -89,6 +90,11 @@ public class MainMenu : MonoBehaviour
         Color c = dimImage.color;
         c.a = alpha;
         dimImage.color = c;
+    }
+
+    public void QuittoTitle()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
     public void Quit()
     {
