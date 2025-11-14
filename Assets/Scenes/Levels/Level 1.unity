@@ -2262,6 +2262,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnPoints:
   - {fileID: 1820041973}
+  - {fileID: 1404390346}
+  - {fileID: 1272333190}
+  - {fileID: 1347242404}
   _mummyPrefab: {fileID: 1165658733893924780, guid: 3b3e259661897514dacd538440cd41f6, type: 3}
   _spawnRadius: 4
   _minEnemies: 2
