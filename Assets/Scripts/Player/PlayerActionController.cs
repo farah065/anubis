@@ -31,9 +31,9 @@ namespace GEM
 
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
-        //[SerializeField] private float baseMeleeAttackDamage = 10;
-        //[SerializeField] private float baseMeleeAttackSpeed = 1f;
-        //[SerializeField] private float baseMeleeAttackKnockback = 5f;
+        [SerializeField] private float baseMeleeAttackDamage = 10;
+        [SerializeField] private float baseMeleeAttackSpeed = 1f;
+        [SerializeField] private float baseMeleeAttackKnockback = 5f;
         //[SerializeField] private float meleeAttackCooldown = 0.4f; // time between attacks in combo
         //[SerializeField] private float comboResetTime = 1.25f; // time before combo resets if no new attack
 
@@ -235,6 +235,36 @@ namespace GEM
         //        }
         //    }
         //}
+        private void attackVector()
+        {
+            // base stats (placeholders for future modifiers per combo stage)
+            float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
+            float attackDamage = baseMeleeAttackDamage; // could scale with combo index
+            float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
+            float attackAngle = 90f; // frontal arc
+
+            Vector3 forward = transform.forward;
+            Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
+            Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
+            foreach (var hit in hitColliders)
+            {
+                Debug.Log(hit.gameObject.name);
+                Vector3 directionToTarget = (hit.transform.position - attackOrigin).normalized;
+                float angle = Vector3.Angle(forward, directionToTarget);
+                if (angle <= attackAngle * 0.5f)
+                {
+                    // TODO: Apply damage & knockback
+                    Debug.DrawLine(attackOrigin, hit.transform.position, Color.red, 0.2f);
+
+                    TestEnemy enemy = hit.GetComponent<TestEnemy>();
+                    if (enemy != null)
+                    {
+                        enemy.OnHit();
+                    }
+                }
+            }
+        }
+
 
         private void MeleeAttack()
         {
@@ -265,6 +295,9 @@ namespace GEM
             {
                 clicks = 1;
                 isAttacking = true;
+                playerMovementController?.SetIsPerformingAction(true);
+                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                attackVector();
                 Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", 1);
@@ -272,19 +305,6 @@ namespace GEM
                 return;
             }
 
-            //Debug.Log($"Inside, currently attacking: {isAttacking}");
-            //lastClickedTime = Time.time;
-
-            //if (!isAttacking)
-            //{
-            //    int startCombo = Mathf.Clamp(queuedClicks + 1, 1, 3);
-            //    Debug.Log($"starting combo with : {startCombo}");
-            //    StartCombo(startCombo);
-            //    queuedClicks = 0;
-            //    return;
-            //}
-
-            //// If already attacking, just queue up
             clicks = Mathf.Clamp(clicks + 1, 1, 3);
             Debug.Log($"Queued click while attacking: clicks = {clicks}");
 
@@ -302,6 +322,9 @@ namespace GEM
                 anim.SetBool("ReturnToIdle", false);
                 int nextStep = currentStep + 1;
                 nextStep = Mathf.Clamp(nextStep, 1, 3);
+                playerMovementController?.SetIsPerformingAction(true);
+                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                attackVector();
                 anim.SetInteger("AttackIndex", nextStep);
                 anim.SetTrigger("Attack"); // plays next clip
                 Debug.Log($"Chaining to next attack: {nextStep}");
