@@ -1,6 +1,11 @@
 ﻿﻿using System;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditorInternal;
+
 #endif
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,17 +22,30 @@ namespace GEM
         [SerializeField] private PlayerAnimationController playerAnimationController;
 
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
+        [SerializeField] private Animator anim; 
+        [SerializeField] private AnimatorStateInfo state;
+
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput; // required for reading melee attack input
 
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
-        [SerializeField] private float baseMeleeAttackDamage = 10;
-        [SerializeField] private float baseMeleeAttackSpeed = 1f;
-        [SerializeField] private float baseMeleeAttackKnockback = 5f;
-        [SerializeField] private float meleeAttackCooldown = 0.4f; // time between attacks in combo
-        [SerializeField] private float comboResetTime = 1.25f; // time before combo resets if no new attack
+        //[SerializeField] private float baseMeleeAttackDamage = 10;
+        //[SerializeField] private float baseMeleeAttackSpeed = 1f;
+        //[SerializeField] private float baseMeleeAttackKnockback = 5f;
+        //[SerializeField] private float meleeAttackCooldown = 0.4f; // time between attacks in combo
+        //[SerializeField] private float comboResetTime = 1.25f; // time before combo resets if no new attack
+
+        [SerializeField] public float meleeAttackCooldownTime = 2f;
+        [SerializeField] private float meleeAttackNextFireTme = 1f;
+        [SerializeField] public static int noOfClicks = 0;
+        [SerializeField] float lastClickedTime = 0f;
+        [SerializeField] float maxComboDelay = 4f;
+        [SerializeField] int clicks = 0;   // how many extra clicks during current attack (1 or 2)
+        [SerializeField] float lastClickTime = 0f;
+        [SerializeField] private bool isAttacking = false;
+
 
         [Header("Ranged Attack Settings")]
         [SerializeField] private float baseRangedAttackRange = 10f;
@@ -87,6 +105,7 @@ namespace GEM
                 _meleeAction = map.FindAction("Melee Attack") ?? map.FindAction("MeleeAttack");
                 _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
             }
+            anim = playerAnimationController.Animator;
         }
 
         private void Update()
@@ -97,83 +116,216 @@ namespace GEM
 
         }
 
+        //private void MeleeAttack()
+        //{
+        //    Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
+
+        //    // decrement timers each frame
+        //    if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
+        //    if (_attackComboDelta > 0f)
+        //    {
+        //        _attackComboDelta -= Time.deltaTime;
+        //        if (_attackComboDelta <= 0f)
+        //        {
+        //            // combo window expired
+        //            _attackComboNum = 0;
+        //        }
+        //    }
+
+        //    // read cached melee action
+        //    bool attackTriggered = _meleeAction != null && _meleeAction.WasPerformedThisFrame();
+
+        //    // only proceed if input triggered and per-attack cooldown finished and combo not maxed out
+        //    if (!attackTriggered || _attackDelta > 0f)
+        //    {
+        //        playerAnimationController.SetMelee(-1);
+        //        return;
+        //    }
+        //    if ( _attackComboNum >= MAX_COMBO) return;
+
+        //    // execute attack
+        //    playerMovementController?.SetIsPerformingAction(true);
+        //    playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+
+        //    // base stats (placeholders for future modifiers per combo stage)
+        //    float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
+        //    float attackDamage = baseMeleeAttackDamage; // could scale with combo index
+        //    float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
+        //    float attackAngle = 90f; // frontal arc
+
+        //    Vector3 forward = transform.forward;
+        //    Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
+        //    Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
+        //    foreach (var hit in hitColliders)
+        //    {
+        //        Debug.Log(hit.gameObject.name);
+        //        Vector3 directionToTarget = (hit.transform.position - attackOrigin).normalized;
+        //        float angle = Vector3.Angle(forward, directionToTarget);
+        //        if (angle <= attackAngle * 0.5f)
+        //        {
+        //            // TODO: Apply damage & knockback
+        //            Debug.DrawLine(attackOrigin, hit.transform.position, Color.red, 0.2f);
+
+        //            TestEnemy enemy = hit.GetComponent<TestEnemy>();
+        //            if (enemy != null)
+        //            {
+        //                enemy.OnHit();
+        //            }
+        //        }
+        //    }
+
+        //    // trigger animation with current combo stage
+        //    int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
+        //    playerAnimationController?.SetMelee(stage);
+
+        //    // advance combo index (0,1,2) then wrap
+        //    _attackComboNum++;
+
+
+
+        //    // reset timers
+        //    _attackDelta = meleeAttackCooldown * (1 / baseMeleeAttackSpeed); // set cooldown before next attack allowed
+        //    _attackComboDelta = comboResetTime * (1 / baseMeleeAttackSpeed); // refresh combo window
+
+        //    playerMovementController?.SetIsPerformingAction(false);
+        //}
+
+        //private void MeleeAttack()
+        //{
+        //    state = anim.GetCurrentAnimatorStateInfo(0);
+        //    string stateName = state.IsName("Attack0") ? "Attack0" :
+        //               state.IsName("Attack1") ? "Attack1" :
+        //               state.IsName("Attack2") ? "Attack2" : "None";
+
+        //    Debug.Log($"[MeleeAttack] State: {stateName}, Time: {state.normalizedTime:F2}, noOfClicks={noOfClicks}, is attackTriggered? : {isAttacking}");
+
+        //    //no other inputs perceived while attacking
+        //    if(playerInput != null) 
+        //    { 
+        //        playerInput.enabled = !isAttacking;  
+        //    }
+
+        //    // Reset attack flags when animation finishes
+        //    if (state.normalizedTime > 0.5f && stateName.StartsWith("Attack"))
+        //    {
+        //        Debug.Log($"[MeleeAttack] Anim almost done and it's attack({stateName}), no more attacks for u");
+        //        //isAttacking = false;
+        //        //anim.SetBool(stateName, false);
+
+        //        EndAttack();
+
+
+        //    }
+
+        //    // Reset if combo timeout
+        //    if (Time.time - lastClickedTime > maxComboDelay)
+        //    {
+        //        Debug.Log("[MeleeAttack] combo timed out, combo reset");
+        //        noOfClicks = 0;
+        //    }
+
+        //    // Trigger new attack only if not attacking
+        //    if (!isAttacking && Time.time > meleeAttackNextFireTme)
+        //    {
+        //        bool attackTriggered = _meleeAction != null && _meleeAction.WasPerformedThisFrame();
+        //        if (attackTriggered)
+        //        {
+        //            OnMeleeClick();
+
+        //        }
+        //    }
+        //}
+
         private void MeleeAttack()
         {
-            Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
-
-            // decrement timers each frame
-            if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
-            if (_attackComboDelta > 0f)
+            if (Time.time - lastClickedTime> maxComboDelay)
             {
-                _attackComboDelta -= Time.deltaTime;
-                if (_attackComboDelta <= 0f)
-                {
-                    // combo window expired - reset ONLY if not already at 0
-                    if (_attackComboNum > 0)
-                    {
-                        _attackComboNum = 0;
-                        playerAnimationController.SetMelee(-1); // Set Attack = false
-                    }
-                }
+                Debug.Log("Timed out");
+                isAttacking = false;
+                clicks = 0;
+                anim.SetInteger("AttackIndex", 0);
+                anim.SetBool("ReturnToIdle", true);
             }
-
-            // read cached melee action
-            bool attackTriggered = _meleeAction != null && _meleeAction.WasPerformedThisFrame();
-
-            // only proceed if input triggered and per-attack cooldown finished and combo not maxed out
-            if (!attackTriggered || _attackDelta > 0f)
+            if(_meleeAction != null && _meleeAction.WasPerformedThisFrame())
             {
-                playerAnimationController.SetMelee(-1);
-                return;
+                Debug.Log("Click");
+                
+                OnMeleeClick();
             }
-            if ( _attackComboNum >= MAX_COMBO) return;
-
-            // execute attack
-            playerMovementController?.SetIsPerformingAction(true);
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
-
-            // base stats (placeholders for future modifiers per combo stage)
-            float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
-            float attackDamage = baseMeleeAttackDamage; // could scale with combo index
-            float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
-            float attackAngle = 90f; // frontal arc
-
-            Vector3 forward = transform.forward;
-            Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
-            Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
-            foreach (var hit in hitColliders)
-            {
-                Debug.Log(hit.gameObject.name);
-                Vector3 directionToTarget = (hit.transform.position - attackOrigin).normalized;
-                float angle = Vector3.Angle(forward, directionToTarget);
-                if (angle <= attackAngle * 0.5f)
-                {
-                    // TODO: Apply damage & knockback
-                    Debug.DrawLine(attackOrigin, hit.transform.position, Color.red, 0.2f);
-
-                    TestEnemy enemy = hit.GetComponent<TestEnemy>();
-                    if (enemy != null)
-                    {
-                        enemy.OnHit();
-                    }
-                }
-            }
-
-            // trigger animation with current combo stage
-            int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
-            playerAnimationController?.SetMelee(stage);
-
-            // advance combo index (0,1,2) then wrap
-            _attackComboNum++;
-
             
 
-            // reset timers
-            _attackDelta = meleeAttackCooldown * (1 / baseMeleeAttackSpeed); // set cooldown before next attack allowed
-            _attackComboDelta = comboResetTime * (1 / baseMeleeAttackSpeed); // refresh combo window
-
-            playerMovementController?.SetIsPerformingAction(false);
         }
+
+        private void OnMeleeClick()
+        {
+            lastClickedTime = Time.time;
+            Debug.Log($"is attacking? : {isAttacking}");
+            
+            if(!isAttacking)
+            {
+                clicks = 1;
+                isAttacking = true;
+                Debug.Log("Setting attack0");
+                anim.SetBool("ReturnToIdle", false);
+                anim.SetInteger("AttackIndex", 1);
+                anim.SetTrigger("Attack");
+                return;
+            }
+
+            //Debug.Log($"Inside, currently attacking: {isAttacking}");
+            //lastClickedTime = Time.time;
+
+            //if (!isAttacking)
+            //{
+            //    int startCombo = Mathf.Clamp(queuedClicks + 1, 1, 3);
+            //    Debug.Log($"starting combo with : {startCombo}");
+            //    StartCombo(startCombo);
+            //    queuedClicks = 0;
+            //    return;
+            //}
+
+            //// If already attacking, just queue up
+            clicks = Mathf.Clamp(clicks + 1, 1, 3);
+            Debug.Log($"Queued click while attacking: clicks = {clicks}");
+
+        }
+
+        public void ContinueCombo()
+        {
+            Debug.Log("ContinueCombo called. clicks=" + clicks + " lastClickDelta=" + (Time.time - lastClickTime).ToString("F2"));
+
+            int currentStep = anim.GetInteger("AttackIndex");
+            int targetStep = clicks;
+
+            if (targetStep> currentStep && (Time.time - lastClickedTime)<= maxComboDelay)
+            {
+                anim.SetBool("ReturnToIdle", false);
+                int nextStep = currentStep + 1;
+                nextStep = Mathf.Clamp(nextStep, 1, 3);
+                anim.SetInteger("AttackIndex", nextStep);
+                anim.SetTrigger("Attack"); // plays next clip
+                Debug.Log($"Chaining to next attack: {nextStep}");
+                return;
+            }
+            // combo finished
+            clicks = 0;
+            isAttacking = false;
+            anim.SetInteger("AttackIndex", 0);
+            anim.SetBool("ReturnToIdle", true);
+            Debug.Log("Combo Ended");
+        }
+
+
+
+
+
+        private bool IsInStateOrTransition(string stateName)
+        {
+            AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+            AnimatorTransitionInfo trans = anim.GetAnimatorTransitionInfo(0);
+            return info.IsName(stateName) || trans.IsUserName(stateName);
+        }
+
 
         private void RangedAttack()
         {
@@ -262,6 +414,7 @@ namespace GEM
 
             _wasBlocking = blockHeld;
         }
+
 
         private void OnAttackAnimationEnded()
         {

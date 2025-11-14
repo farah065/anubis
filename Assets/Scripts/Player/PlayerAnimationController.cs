@@ -8,6 +8,7 @@ namespace GEM
     {
         [Header("References")]
         [SerializeField] private Animator animator;
+        public Animator Animator => animator;
 
         [Header("Feedbacks")]
         [SerializeField] private MMF_Player footstepFeedbacks;
