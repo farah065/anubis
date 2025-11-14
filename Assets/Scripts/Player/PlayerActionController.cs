@@ -270,7 +270,6 @@ namespace GEM
         {
             if (Time.time - lastClickedTime> maxComboDelay)
             {
-                Debug.Log("Timed out");
                 isAttacking = false;
                 clicks = 0;
                 anim.SetInteger("AttackIndex", 0);
@@ -279,8 +278,6 @@ namespace GEM
             }
             if (_meleeAction != null && _meleeAction.WasPerformedThisFrame())
             {
-                Debug.Log("Click");
-                
                 OnMeleeClick();
             }
             
@@ -290,7 +287,7 @@ namespace GEM
         private void OnMeleeClick()
         {
             lastClickedTime = Time.time;
-            Debug.Log($"is attacking? : {isAttacking}");
+            //Debug.Log($"is attacking? : {isAttacking}");
             
             if(!isAttacking)
             {
@@ -300,7 +297,7 @@ namespace GEM
                 playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
                 attackVector();
                 //animator params
-                Debug.Log("Setting attack0");
+                //Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", 1);
                 anim.SetTrigger("Attack");
@@ -308,13 +305,13 @@ namespace GEM
             }
 
             clicks = Mathf.Clamp(clicks + 1, 1, 3);
-            Debug.Log($"Queued click while attacking: clicks = {clicks}");
+            //Debug.Log($"Queued click while attacking: clicks = {clicks}");
 
         }
 
         public void ContinueCombo()
         {
-            Debug.Log("ContinueCombo called. clicks=" + clicks + " lastClickDelta=" + (Time.time - lastClickTime).ToString("F2"));
+            //Debug.Log("ContinueCombo called. clicks=" + clicks + " lastClickDelta=" + (Time.time - lastClickTime).ToString("F2"));
 
             int currentStep = anim.GetInteger("AttackIndex");
             int targetStep = clicks;
@@ -330,7 +327,7 @@ namespace GEM
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", nextStep);
                 anim.SetTrigger("Attack"); // plays next clip
-                Debug.Log($"Chaining to next attack: {nextStep}");
+                //Debug.Log($"Chaining to next attack: {nextStep}");
                 return;
             }
             // combo finished
@@ -338,7 +335,7 @@ namespace GEM
             isAttacking = false;
             anim.SetInteger("AttackIndex", 0);
             anim.SetBool("ReturnToIdle", true);
-            Debug.Log("Combo Ended");
+            //Debug.Log("Combo Ended");
             playerMovementController?.SetIsPerformingAction(false);
         }
 
