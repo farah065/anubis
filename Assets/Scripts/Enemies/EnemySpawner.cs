@@ -43,12 +43,14 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         Mummy enemy = Instantiate(_mummyPrefab);
         enemy.SetPool(_mummyPool);
+        enemy.enabled = true;
         return enemy;
     }
 
     private void OnGetMummy(Mummy enemy)
     {
         enemy.gameObject.SetActive(true);
+        enemy.enabled = true;
     }
 
     private void OnReleaseMummy(Mummy enemy)

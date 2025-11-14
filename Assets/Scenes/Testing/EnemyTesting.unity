@@ -140,27 +140,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.405037
+      value: 36.13502
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.664335
+      value: 17.664337
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -31.28293
+      value: -21.294018
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.405037
+      value: 36.13502
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.664335
+      value: 17.664337
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -31.28293
+      value: -21.294018
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Damping.x
@@ -180,11 +180,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.x
-      value: -4.999984
+      value: 0.0000004470348
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.z
-      value: 5.000016
+      value: -7.071068
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Lookahead.Enabled
@@ -273,7 +273,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3893294197879345259, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.5
+      value: 4.23
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_LocalPosition.y
@@ -281,7 +281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.4
+      value: 23.46
       objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_LocalRotation.w
@@ -313,7 +313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4416926081852918481, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_Name
-      value: Player (2)
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7556844261012438536, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: animationController
@@ -544,7 +544,7 @@ GameObject:
   - component: {fileID: 562081445}
   - component: {fileID: 562081446}
   m_Layer: 8
-  m_Name: Player
+  m_Name: TestPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1431,7 +1431,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 5c4e13e1d19b97e4aa403491bdbb3bc6, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: e6188d140d9e4c740a93992928c8f800, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &1034833599
 Transform:
@@ -1479,9 +1479,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnPoints:
   - {fileID: 1372554860}
-  - {fileID: 2074732368}
-  - {fileID: 1376555924}
-  - {fileID: 646504452}
   _mummyPrefab: {fileID: 1165658733893924780, guid: 3b3e259661897514dacd538440cd41f6, type: 3}
   _spawnRadius: 4
   _minEnemies: 2
