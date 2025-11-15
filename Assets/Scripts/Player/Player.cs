@@ -18,6 +18,7 @@ namespace GEM
             if (attack != null)
             {
                 Vector3 forceDirection = (transform.position - other.transform.root.position).normalized; //using transform.root here to get the transform of the player (parent), this may cause issues with other damage dealing objects
+                forceDirection.y = 0f;
                 float damage = attack.attackDamage;
                 Vector3 force = forceDirection * attack.knockbackForce;
                 OnHit(damage, force);
