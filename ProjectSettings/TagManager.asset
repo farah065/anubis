@@ -8,6 +8,7 @@ TagManager:
   - DontDestroyOnLoad
   - PlayerAttack
   - SpawnPoint
+  - EnemyAttack
   layers:
   - Default
   - TransparentFX

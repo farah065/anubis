@@ -91,6 +91,10 @@ public abstract class Enemy : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("EnemyAttack"))
+        {
+            return;
+        }
         AttackData attack = other.GetComponent<AttackData>();
         if (attack != null)
         {
