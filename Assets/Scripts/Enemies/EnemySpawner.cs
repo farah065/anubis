@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class EnemySpawner : Singleton<EnemySpawner>
 {
+    public int NumberOfEnemies = 0;
     [SerializeField] private Transform[] _spawnPoints;
 
     [Header("Mummy Settings")]
@@ -83,6 +84,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
                 enemy.transform.position = spawnPos;
                 enemy.InitialPosition = spawnPos;
                 spawnedPositions.Add(spawnPos);
+                NumberOfEnemies++;
             }
         }
     }

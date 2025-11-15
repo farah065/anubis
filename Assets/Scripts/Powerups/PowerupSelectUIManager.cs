@@ -26,6 +26,7 @@ namespace GEM
 
             PowerupData selectedPowerup = currentPowerups[index];
 
+            Debug.Log($"Index: {index}");
             Debug.Log($"Selected: {selectedPowerup.name}");
             Debug.Log($"Rarity: {selectedPowerup.rarity}");
             Debug.Log($"Property: {selectedPowerup.property}");

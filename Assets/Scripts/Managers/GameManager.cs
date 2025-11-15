@@ -18,6 +18,9 @@ public class GameManager : Singleton<GameManager>
     private string lastLevelName;
     private int levelIndex = 0;
 
+    [SerializeField] private GameObject powerupPrefab;
+    public bool PowerupInScene = false;
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -55,6 +58,8 @@ public class GameManager : Singleton<GameManager>
 
     public void LoadRandomLevel()
     {
+        if (PowerupInScene) { return; }
+
         if (levelIndex < 5)
         {
             if (levelSceneNames.Count == 0)
@@ -86,5 +91,20 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene(cooldownRoom.name);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<Player>().health = 100;
+    }
+
+    public void SpawnPowerup()
+    {
+        PowerupInScene = true;
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+        Instantiate(powerupPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SpawnPowerup();
+        }
     }
 }

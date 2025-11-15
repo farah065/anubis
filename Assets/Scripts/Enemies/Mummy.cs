@@ -35,6 +35,12 @@ public class Mummy : Enemy
         {
             yield return null;
         }
+        EnemySpawner.Instance.NumberOfEnemies--;
+        if (EnemySpawner.Instance.NumberOfEnemies == 0)
+        {
+            GameManager.Instance.SpawnPowerup();
+        }
+
         _mummyPool.Release(this);
     }
 }

@@ -832,7 +832,7 @@ GameObject:
   - component: {fileID: 6809715399266381304}
   - component: {fileID: 2731879375551272614}
   - component: {fileID: 4461442476858538083}
-  - component: {fileID: 7769750526398942986}
+  - component: {fileID: 6631136639008080499}
   m_Layer: 3
   m_Name: AxeHitbox
   m_TagString: Untagged
@@ -884,7 +884,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7769750526398942986
+--- !u!114 &6631136639008080499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -893,11 +893,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2199764122818276374}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5381bcfc723d4c1fb20d44f3fe5534c7, type: 3}
+  m_Script: {fileID: 11500000, guid: 04f98e6539cd4bb9b24d374261bcbee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 0
-  knockbackForce: 0
+  attackDamage: 10
+  knockbackForce: 5
 --- !u!1 &2243558965516038833
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,6 +1701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
+  moveSpeedBonus: 0
   rotationSmoothTime: 0.035
   speedChangeRate: 10
   dashSpeed: 30
@@ -1714,7 +1715,6 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 1
-  animationController: {fileID: 926068301733939286}
   playerInput: {fileID: 8218533180043668272}
 --- !u!114 &8593765550326552592
 MonoBehaviour:
@@ -1773,26 +1773,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e252153e211942439cf4184eea797cb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMovementController: {fileID: 7556844261012438536}
-  playerLookController: {fileID: 8593765550326552592}
-  playerAnimationController: {fileID: 926068301733939286}
   projectilePrefab: {fileID: 1888434345910479824, guid: 6854b55959887e5498cf75b3189cf4ba, type: 3}
   anim: {fileID: 6982812146204527121}
   axeHitbox: {fileID: 2199764122818276374}
   playerInput: {fileID: 8218533180043668272}
   baseMeleeAttackRange: 2
   baseMeleeAttackDamage: 10
+  MeleeAttackDamageBonus: 0
   baseMeleeAttackSpeed: 1
   baseMeleeAttackKnockback: 5
-  meleeAttackData: {fileID: 7769750526398942986}
+  MeleeAttackKnockbackBonus: 0
+  meleeAttackData: {fileID: 6631136639008080499}
   meleeAttackCooldownTime: 2
   baseRangedAttackRange: 10
   baseRangedAttackDamage: 8
+  RangedAttackDamageBonus: 0
   baseRangedAttackKnockback: 1
+  RangedAttackKnockbackBonus: 0
   baseRangedAttackSpeed: 15
   baseRangedAttackArea: 500
   rangedAttackCooldown: 1
-  rangedAttackData: {fileID: 0}
   baseBlockEfficiency: 0.5
   baseParryTimingWindow: 0.3
   parryActivationCooldown: 1
@@ -1865,6 +1865,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+  maxHealth: 100
+  baseHealth: 100
+  healthBonus: 0
+  gameManager: {fileID: 0}
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0

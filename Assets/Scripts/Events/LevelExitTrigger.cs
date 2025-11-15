@@ -9,7 +9,7 @@ public class LevelExitTrigger : MonoBehaviour
     {
         if (gameManager == null)
         {
-            gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindFirstObjectByType<GameManager>();
         }
 
         if (gameManager == null)
@@ -22,7 +22,7 @@ public class LevelExitTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Enemy enemy = FindObjectOfType<Enemy>();
+            Enemy enemy = FindFirstObjectByType<Enemy>();
             if (enemy == null)
             {
                 gameManager.LoadRandomLevel();
