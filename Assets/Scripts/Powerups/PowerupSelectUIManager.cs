@@ -1,13 +1,15 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 namespace GEM
 {
-    public class PowerupSelectUIManager : MonoBehaviour
+    public class PowerupSelectUIManager : Singleton<PowerupSelectUIManager>
     {
-        [SerializeField] private UIDocument uiDocument;
+        //[SerializeField] private UIDocument uiDocument;
         [SerializeField] private GameObject powerupSelectUI;
+        [SerializeField] private GameObject[] buttons;
         [SerializeField] private PowerupPickup intiatingPickup;
         private List<PowerupData> currentPowerups; // Store the current powerup selection
 
@@ -34,6 +36,7 @@ namespace GEM
 
             Player.Instance.ApplyPowerup(selectedPowerup);
             intiatingPickup.ClosePowerupUI();
+            intiatingPickup = null;
         }
 
         public void SetInitiatingPickup(PowerupPickup pickup)
@@ -43,8 +46,6 @@ namespace GEM
 
         public void PopulatePowerupUI(List<PowerupData> powerups)
         {
-            var root = uiDocument.rootVisualElement;
-
             // Store powerups for later reference
             currentPowerups = powerups;
 
@@ -59,8 +60,11 @@ namespace GEM
                 PowerupData powerup = powerups[i];
 
                 // Get the item button
-                Button itemButton = root.Q<Button>($"Item{i + 1}");
+                Button itemButton = buttons[i].GetComponent<Button>();
                 if (itemButton == null) continue;
+
+                int itemIndex = i;
+                itemButton.onClick.AddListener(() => OnPowerupSelected(itemIndex));
 
                 // Set background color based on rarity
                 Color backgroundColor;
@@ -82,10 +86,10 @@ namespace GEM
                         backgroundColor = commonColor;
                         break;
                 }
-                itemButton.style.backgroundColor = backgroundColor;
+                itemButton.gameObject.GetComponent<Image>().color = backgroundColor;
 
                 // Set title
-                Label title = itemButton.Q<Label>("Title");
+                TMP_Text title = itemButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>();
                 if (title != null)
                 {
                     string propertyName = FormatPropertyName(powerup.property);
@@ -94,16 +98,12 @@ namespace GEM
                 }
 
                 // Set description
-                Label description = itemButton.Q<Label>("Description");
+                TMP_Text description = itemButton.transform.GetChild(1).gameObject.GetComponent<TMP_Text>();
                 if (description != null)
                 {
                     string propertyName = FormatPropertyName(powerup.property);
                     description.text = $"Increases {propertyName} by {powerup.value}%";
                 }
-
-                // Register click handler (capture index in local variable)
-                int itemIndex = i;
-                itemButton.clicked += () => OnPowerupSelected(itemIndex);
             }
         }
 

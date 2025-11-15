@@ -23,11 +23,7 @@ public class MainMenu : MonoBehaviour
     }
     public void Play()
     {
-        // TODO: Load the first scene here.
-        // Example:
-        // SceneManager.LoadScene("GameScene");
-
-        Debug.Log("Play button pressed");
+        SceneManager.LoadScene("Cooldown Room");
     }
     public void Settings()
     {

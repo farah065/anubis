@@ -99,12 +99,4 @@ public class GameManager : Singleton<GameManager>
         GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
         Instantiate(powerupPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SpawnPowerup();
-        }
-    }
 }
