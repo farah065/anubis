@@ -1,5 +1,6 @@
 using System.Collections;
 using GEM;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,10 +19,14 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
     [SerializeField] protected EnemyState _currentState;
+    [SerializeField] protected MMF_Player _onHitFeedbacks;
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
     protected bool _canAttack = true;
+
+    protected Vector3 _knockbackVelocity;
+    protected float _knockbackTimeRemaining;
 
     private Coroutine _playerDetectionCoroutine;
 
@@ -35,6 +40,12 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
+        if (_knockbackTimeRemaining > 0f && _knockbackVelocity.sqrMagnitude > 0.0001f)
+        {
+            transform.position += _knockbackVelocity * Time.deltaTime;
+            _knockbackTimeRemaining -= Time.deltaTime;
+        }
+
         // constantly update the agent destination if it's following the player
         if (_currentState == EnemyState.Following && _targetGameObj != null)
         {
@@ -72,7 +83,7 @@ public abstract class Enemy : MonoBehaviour
         AttackData attack = other.GetComponent<AttackData>();
         if (attack != null)
         {
-            Vector3 forceDirection = (transform.position - other.transform.position).normalized;
+            Vector3 forceDirection = (transform.position - other.transform.root.position).normalized; //using transform.root here to get the transform of the player (parent), this may cause issues with other damage dealing objects
             int damage = attack.attackDamage;
             Vector3 force = forceDirection * attack.knockbackForce;
             OnHit(damage, force);
@@ -218,10 +229,10 @@ public abstract class Enemy : MonoBehaviour
 
     #region virtual
 
-    // TODO: hook this up with player
     public virtual void OnHit(int damage, Vector3 force)
     {
         TakeDamage(damage, force);
+        _onHitFeedbacks?.PlayFeedbacks();
         Debug.Log("Enemy  hit!");
     }
 
@@ -231,11 +242,10 @@ public abstract class Enemy : MonoBehaviour
         _currentHp -= damage;
         Debug.Log($"HP now: {_currentHp}");
 
-
         if (force.sqrMagnitude > 0.0001f)
         {
-            Vector3 targetPosition = transform.position + force;
-            Agent.Warp(targetPosition);
+            _knockbackVelocity = force;
+            _knockbackTimeRemaining = 0.15f;
         }
 
         if (_currentHp <= 0)

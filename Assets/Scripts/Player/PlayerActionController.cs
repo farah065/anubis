@@ -23,12 +23,12 @@ namespace GEM
 
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
         [SerializeField] private Animator anim; 
-        [SerializeField] private AnimatorStateInfo state;
+        [SerializeField] private AnimatorStateInfo _state;
         [SerializeField] private GameObject axeHitbox;
 
 
         [Header("Input")]
-        [SerializeField] private PlayerInput playerInput; // required for reading melee attack input
+        [SerializeField] private PlayerInput playerInput;
 
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
@@ -37,14 +37,14 @@ namespace GEM
         [SerializeField] private float baseMeleeAttackKnockback = 5f;
         public AttackData meleeAttackData;
 
-        [SerializeField] public float meleeAttackCooldownTime = 2f;
-        [SerializeField] private float meleeAttackNextFireTme = 1f;
-        [SerializeField] public static int noOfClicks = 0;
-        [SerializeField] float lastClickedTime = 0f;
-        [SerializeField] float maxComboDelay = 4f;
-        [SerializeField] int clicks = 0;   // how many extra clicks during current attack (1 or 2)
-        [SerializeField] float lastClickTime = 0f;
-        [SerializeField] private bool isAttacking = false;
+        public float meleeAttackCooldownTime = 2f;
+        private float _meleeAttackNextFireTme = 1f;
+        public static int NoOfClicks = 0;
+        float _lastClickedTime = 0f;
+        float _maxComboDelay = 4f;
+        int _clicks = 0;   // how many extra clicks during current attack (1 or 2)
+        float _lastClickTime = 0f;
+        private bool _isAttacking = false;
 
 
         [Header("Ranged Attack Settings")]
@@ -65,8 +65,8 @@ namespace GEM
         private float _attackDelta;       // per-attack cooldown timer
         private float _attackComboDelta;  // combo continuation window timer
         private int _attackComboNum;      // current combo index (0..2)
-        private int MAX_COMBO = 3;
-        private int ATTACK_HEIGHT_OFFSET = 1;
+        private int _maxCombo = 3;
+        private int _attackHeightOffset = 1;
         private float _rangedAttackDelta;
 
         // Block / Parry state
@@ -87,7 +87,6 @@ namespace GEM
         void Awake()
         {
             meleeAttackData.Initialize((int)baseMeleeAttackDamage, baseMeleeAttackKnockback);
-            rangedAttackData.Initialize((int)baseRangedAttackDamage, 0f);
 
             if (playerMovementController == null)
             {
@@ -121,43 +120,14 @@ namespace GEM
 
         }
 
-        private void attackVector()
-        {
-            // base stats (placeholders for future modifiers per combo stage)
-            float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
-            float attackDamage = baseMeleeAttackDamage; // could scale with combo index
-            float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
-            float attackAngle = 90f; // frontal arc
-
-            Vector3 forward = transform.forward;
-            Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
-            Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
-            foreach (var hit in hitColliders)
-            {
-                Vector3 directionToTarget = (hit.transform.position - attackOrigin).normalized;
-                float angle = Vector3.Angle(forward, directionToTarget);
-                if (angle <= attackAngle * 0.5f)
-                {
-                    // TODO: Apply damage & knockback
-                    Debug.DrawLine(attackOrigin, hit.transform.position, Color.red, 0.2f);
-
-                    TestEnemy enemy = hit.GetComponent<TestEnemy>();
-                    if (enemy != null)
-                    {
-                        enemy.OnHit();
-                    }
-                }
-            }
-        }
-
 
         private void MeleeAttack()
         {
-            axeHitbox.SetActive(isAttacking);
-            if (Time.time - lastClickedTime> maxComboDelay)
+            axeHitbox.SetActive(_isAttacking);
+            if (Time.time - _lastClickedTime> _maxComboDelay)
             {
-                isAttacking = false;
-                clicks = 0;
+                _isAttacking = false;
+                _clicks = 0;
                 anim.SetInteger("AttackIndex", 0);
                 anim.SetBool("ReturnToIdle", true);
                 playerMovementController?.SetIsPerformingAction(false);
@@ -172,16 +142,15 @@ namespace GEM
 
         private void OnMeleeClick()
         {
-            lastClickedTime = Time.time;
+            _lastClickedTime = Time.time;
             //Debug.Log($"is attacking? : {isAttacking}");
             
-            if(!isAttacking)
+            if(!_isAttacking)
             {
-                clicks = 1;
-                isAttacking = true;
+                _clicks = 1;
+                _isAttacking = true;
                 playerMovementController?.SetIsPerformingAction(true);
                 playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
-                attackVector();
                 //animator params
                 //Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
@@ -190,7 +159,7 @@ namespace GEM
                 return;
             }
 
-            clicks = Mathf.Clamp(clicks + 1, 1, 3);
+            _clicks = Mathf.Clamp(_clicks + 1, 1, 3);
             //Debug.Log($"Queued click while attacking: clicks = {clicks}");
 
         }
@@ -200,16 +169,15 @@ namespace GEM
             //Debug.Log("ContinueCombo called. clicks=" + clicks + " lastClickDelta=" + (Time.time - lastClickTime).ToString("F2"));
 
             int currentStep = anim.GetInteger("AttackIndex");
-            int targetStep = clicks;
+            int targetStep = _clicks;
 
-            if (targetStep> currentStep && (Time.time - lastClickedTime)<= maxComboDelay)
+            if (targetStep> currentStep && (Time.time - _lastClickedTime)<= _maxComboDelay)
             {
                 int nextStep = currentStep + 1;
                 nextStep = Mathf.Clamp(nextStep, 1, 3);
                 playerMovementController?.SetIsPerformingAction(true);
                 playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
                 //anim params
-                attackVector();
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", nextStep);
                 anim.SetTrigger("Attack"); // plays next clip
@@ -217,8 +185,8 @@ namespace GEM
                 return;
             }
             // combo finished
-            clicks = 0;
-            isAttacking = false;
+            _clicks = 0;
+            _isAttacking = false;
             anim.SetInteger("AttackIndex", 0);
             anim.SetBool("ReturnToIdle", true);
             //Debug.Log("Combo Ended");

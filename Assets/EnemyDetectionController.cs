@@ -4,36 +4,59 @@ using UnityEngine;
 public class EnemyDetectionController : MonoBehaviour
 {
     [SerializeField] private Enemy _enemy;
-    [SerializeField] private SphereCollider _detectionCollider;
+    [SerializeField] private float _scanInterval = 0.1f;
+    [SerializeField] private LayerMask _playerLayerMask;
+
+    private float _detectionRadius;
+    private bool _playerInRange;
+    private Collider _currentPlayerCollider;
 
     protected void OnEnable()
     {
-        _detectionCollider.radius = _enemy.GetEnemyData().PlayerDetectionRadius;
+        _detectionRadius = _enemy.GetEnemyData().PlayerDetectionRadius;
+        _playerInRange = false;
+        _currentPlayerCollider = null;
     }
 
-    protected void OnTriggerEnter(Collider other)
+    protected void Update()
     {
-        Debug.Log($"Name: {other.gameObject.name}, Tag: {other.gameObject.tag}");
-        if (other.CompareTag("Player"))
+        ScanForPlayer();
+    }
+
+    private void ScanForPlayer()
+    {
+        // spherical scan around this controller's position
+        Collider[] hits = Physics.OverlapSphere(transform.position, _detectionRadius, _playerLayerMask);
+
+        if (hits.Length > 0)
         {
-            //moved this logic here to seperate the big ass circle collider from the normal hitbox collider
-            _enemy.OnDetectionEnter(other);
+            Collider playerCollider = hits[0];
+
+            if (!_playerInRange)
+            {
+                _playerInRange = true;
+                _currentPlayerCollider = playerCollider;
+                _enemy.OnDetectionEnter(playerCollider);
+            }
         }
-
-    }
-
-    protected void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        else if (_playerInRange)
         {
-            _enemy.OnDetectionExit(other);
+            // player was in range, but is no longer detected
+            _playerInRange = false;
+            if (_currentPlayerCollider != null)
+            {
+                _enemy.OnDetectionExit(_currentPlayerCollider);
+                _currentPlayerCollider = null;
+            }
         }
     }
 
     protected void OnDrawGizmos()
     {
-        // player detection
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _detectionCollider.radius);
+        float radius = _detectionRadius > 0f && Application.isPlaying
+            ? _detectionRadius
+            : (_enemy != null ? _enemy.GetEnemyData().PlayerDetectionRadius : 0f);
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }
