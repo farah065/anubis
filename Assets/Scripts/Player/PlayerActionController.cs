@@ -1,37 +1,52 @@
 ﻿using System;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditorInternal;
+
 #endif
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace GEM
 {
-    public class PlayerActionController : MonoBehaviour
+    public class PlayerActionController : Singleton<PlayerActionController>
     {
-        [SerializeField] private LayerMask enemyLayerMask;
-
-        [Header("References")]
-        [SerializeField] private PlayerMovementController playerMovementController;
-        [SerializeField] private PlayerLookController playerLookController;
-        [SerializeField] private PlayerAnimationController playerAnimationController;
-
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
+        [SerializeField] private Animator anim;
+        [SerializeField] private AnimatorStateInfo _state;
+        [SerializeField] private GameObject axeHitbox;
 
         [Header("Input")]
-        [SerializeField] private PlayerInput playerInput; // required for reading melee attack input
+        [SerializeField] private PlayerInput playerInput;
 
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
         [SerializeField] private float baseMeleeAttackDamage = 10;
+        public float MeleeAttackDamageBonus = 0.0f;
         [SerializeField] private float baseMeleeAttackSpeed = 1f;
         [SerializeField] private float baseMeleeAttackKnockback = 5f;
-        [SerializeField] private float meleeAttackCooldown = 0.4f; // time between attacks in combo
-        [SerializeField] private float comboResetTime = 1.25f; // time before combo resets if no new attack
+        public float MeleeAttackKnockbackBonus = 0.0f;
+        public AttackData meleeAttackData;
+
+        public float meleeAttackCooldownTime = 2f;
+        private float _meleeAttackNextFireTme = 1f;
+        public static int NoOfClicks = 0;
+        float _lastClickedTime = 0f;
+        float _maxComboDelay = 4f;
+        int _clicks = 0;   // how many extra clicks during current attack (1 or 2)
+        float _lastClickTime = 0f;
+        private bool _isAttacking = false;
+
 
         [Header("Ranged Attack Settings")]
         [SerializeField] private float baseRangedAttackRange = 10f;
         [SerializeField] private float baseRangedAttackDamage = 8;
+        public float RangedAttackDamageBonus = 0.0f;
+        [SerializeField] private float baseRangedAttackKnockback = 1f;
+        public float RangedAttackKnockbackBonus = 0.0f;
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
         [SerializeField] private float baseRangedAttackArea = 0f;
         [SerializeField] private float rangedAttackCooldown = 5f;
@@ -41,12 +56,12 @@ namespace GEM
         [SerializeField] private float baseParryTimingWindow = 0.3f;
         [SerializeField] private float parryActivationCooldown = 1.0f; // cooldown to prevent spamming parry
 
-        // timeout delta-time (repurposed)
+        // timeout delta-time
         private float _attackDelta;       // per-attack cooldown timer
         private float _attackComboDelta;  // combo continuation window timer
         private int _attackComboNum;      // current combo index (0..2)
-        private int MAX_COMBO = 3;
-        private int ATTACK_HEIGHT_OFFSET = 1;
+        private int _maxCombo = 3;
+        private int _attackHeightOffset = 1;
         private float _rangedAttackDelta;
 
         // Block / Parry state
@@ -66,17 +81,7 @@ namespace GEM
 
         void Awake()
         {
-            if (playerMovementController == null)
-            {
-                Debug.LogWarning("Player Movement Controller not assigned in Player Action Controller.");
-                playerMovementController = FindFirstObjectByType<PlayerMovementController>();
-            }
-
-            if (playerLookController == null)
-            {
-                Debug.LogWarning("Player Look Controller not assigned in Player Action Controller.");
-                playerLookController = FindFirstObjectByType<PlayerLookController>();
-            }
+            InitializeMeleeAttackData();
 
             // cache block action if possible
             if (playerInput != null && playerInput.currentActionMap != null)
@@ -87,6 +92,14 @@ namespace GEM
                 _meleeAction = map.FindAction("Melee Attack") ?? map.FindAction("MeleeAttack");
                 _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
             }
+            anim = PlayerAnimationController.Instance.Animator;
+        }
+
+        private void InitializeMeleeAttackData()
+        {
+            float damage = baseMeleeAttackDamage + (baseMeleeAttackDamage * (MeleeAttackDamageBonus/100));
+            float knockback = baseMeleeAttackKnockback + (baseMeleeAttackKnockback * (MeleeAttackKnockbackBonus/100));
+            meleeAttackData.Initialize(damage, knockback);
         }
 
         private void Update()
@@ -97,106 +110,117 @@ namespace GEM
 
         }
 
+
         private void MeleeAttack()
         {
-            Debug.Log($"Attack Delta: {_attackDelta}, Combo Delta: {_attackComboDelta}, Combo Num: {_attackComboNum}");
-
-            // decrement timers each frame
-            if (_attackDelta > 0f) _attackDelta -= Time.deltaTime;
-            if (_attackComboDelta > 0f)
+            axeHitbox.SetActive(_isAttacking);
+            if (Time.time - _lastClickedTime> _maxComboDelay)
             {
-                _attackComboDelta -= Time.deltaTime;
-                if (_attackComboDelta <= 0f)
-                {
-                    // combo window expired
-                    _attackComboNum = 0;
-                }
+                _isAttacking = false;
+                _clicks = 0;
+                anim.SetInteger("AttackIndex", 0);
+                anim.SetBool("ReturnToIdle", true);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
+            }
+            if (_meleeAction != null && _meleeAction.WasPerformedThisFrame())
+            {
+                OnMeleeClick();
             }
 
-            // read cached melee action
-            bool attackTriggered = _meleeAction != null && _meleeAction.WasPerformedThisFrame();
 
-            // only proceed if input triggered and per-attack cooldown finished and combo not maxed out
-            if (!attackTriggered || _attackDelta > 0f)
+        }
+
+        private void OnMeleeClick()
+        {
+            _lastClickedTime = Time.time;
+            //Debug.Log($"is attacking? : {isAttacking}");
+
+            if(!_isAttacking)
             {
-                playerAnimationController.SetMelee(-1);
+                _clicks = 1;
+                _isAttacking = true;
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
+                //animator params
+                //Debug.Log("Setting attack0");
+                anim.SetBool("ReturnToIdle", false);
+                anim.SetInteger("AttackIndex", 1);
+                anim.SetTrigger("Attack");
                 return;
             }
-            if (_attackComboDelta > 0f && _attackComboNum == MAX_COMBO) return;
 
-            // execute attack
-            playerMovementController?.SetIsPerformingAction(true);
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+            _clicks = Mathf.Clamp(_clicks + 1, 1, 3);
+            //Debug.Log($"Queued click while attacking: clicks = {clicks}");
 
-            // base stats (placeholders for future modifiers per combo stage)
-            float attackRange = baseMeleeAttackRange; // could vary by _attackComboNum
-            float attackDamage = baseMeleeAttackDamage; // could scale with combo index
-            float attackKnockback = baseMeleeAttackKnockback; // could scale with combo index
-            float attackAngle = 90f; // frontal arc
-
-            Vector3 forward = transform.forward;
-            Vector3 attackOrigin = transform.position + Vector3.up * ATTACK_HEIGHT_OFFSET;
-            Collider[] hitColliders = Physics.OverlapSphere(attackOrigin, attackRange, enemyLayerMask);
-            foreach (var hit in hitColliders)
-            {
-                Debug.Log(hit.gameObject.name);
-                Vector3 directionToTarget = (hit.transform.position - attackOrigin).normalized;
-                float angle = Vector3.Angle(forward, directionToTarget);
-                if (angle <= attackAngle * 0.5f)
-                {
-                    // TODO: Apply damage & knockback
-                    Debug.DrawLine(attackOrigin, hit.transform.position, Color.red, 0.2f);
-
-                    TestEnemy enemy = hit.GetComponent<TestEnemy>();
-                    if (enemy != null)
-                    {
-                        enemy.OnHit();
-                    }
-                }
-            }
-
-            // advance combo index (0,1,2) then wrap
-            _attackComboNum++;
-
-            // trigger animation with current combo stage
-            int stage = Mathf.Clamp(_attackComboNum, 0, MAX_COMBO - 1);
-            playerAnimationController?.SetMelee(stage);
-
-            // reset timers
-            _attackDelta = meleeAttackCooldown * (1/baseMeleeAttackSpeed); // set cooldown before next attack allowed
-            _attackComboDelta = comboResetTime * (1/baseMeleeAttackSpeed); // refresh combo window
-
-            playerMovementController?.SetIsPerformingAction(false);
         }
+
+        public void ContinueCombo()
+        {
+            //Debug.Log("ContinueCombo called. clicks=" + clicks + " lastClickDelta=" + (Time.time - lastClickTime).ToString("F2"));
+
+            int currentStep = anim.GetInteger("AttackIndex");
+            int targetStep = _clicks;
+
+            if (targetStep> currentStep && (Time.time - _lastClickedTime)<= _maxComboDelay)
+            {
+                int nextStep = currentStep + 1;
+                nextStep = Mathf.Clamp(nextStep, 1, 3);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
+                //anim params
+                anim.SetBool("ReturnToIdle", false);
+                anim.SetInteger("AttackIndex", nextStep);
+                anim.SetTrigger("Attack"); // plays next clip
+                //Debug.Log($"Chaining to next attack: {nextStep}");
+                return;
+            }
+            // combo finished
+            _clicks = 0;
+            _isAttacking = false;
+            anim.SetInteger("AttackIndex", 0);
+            anim.SetBool("ReturnToIdle", true);
+            //Debug.Log("Combo Ended");
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
+        }
+
+        private bool IsInStateOrTransition(string stateName)
+        {
+            AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+            AnimatorTransitionInfo trans = anim.GetAnimatorTransitionInfo(0);
+            return info.IsName(stateName) || trans.IsUserName(stateName);
+        }
+
 
         private void RangedAttack()
         {
             if (_rangedAttackDelta > 0f) _rangedAttackDelta -= Time.deltaTime;
             bool rangedTriggered = _rangedAction != null && _rangedAction.WasPerformedThisFrame();
-             if (!rangedTriggered || _rangedAttackDelta > 0f) return;
+            if (!rangedTriggered || _rangedAttackDelta > 0f) return;
 
-             //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
-             playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+            //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
+            PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
 
-             // instantiate projectile if prefab assigned
-             if (projectilePrefab != null)
-             {
-                 Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
-                 Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
-                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
-                 var proj = go.GetComponent<PlayerProjectile>();
-                 if (proj != null)
-                 {
-                     proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
-                 }
-             }
-             else
-             {
-                 Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
-             }
+            // instantiate projectile if prefab assigned
+            if (projectilePrefab != null)
+            {
+                Vector3 spawnPos = (transform.position + Vector3.up + transform.forward * 0.5f);
+                Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
+                var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
+                var proj = go.GetComponent<PlayerProjectile>();
+                float damage = baseRangedAttackDamage + (baseRangedAttackDamage * (RangedAttackDamageBonus/100));
+                float knockback = baseRangedAttackKnockback + (baseRangedAttackKnockback * (RangedAttackKnockbackBonus/100));
+                if (proj != null)
+                {
+                    proj.Initialize(damage, knockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Projectile prefab not assigned on PlayerActionController.");
+            }
 
-             _rangedAttackDelta = rangedAttackCooldown; // start cooldown
-         }
+            _rangedAttackDelta = rangedAttackCooldown; // start cooldown
+        }
 
         private void Block()
         {
@@ -224,8 +248,8 @@ namespace GEM
             {
                 // begin blocking
                 _isBlocking = true;
-                playerMovementController?.SetIsPerformingAction(true);
-                playerAnimationController?.SetBlock(true);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerAnimationController.Instance.SetBlock(true);
                 // mark parry as potentially consumable this hold
                 _parryConsumedThisHold = false;
 
@@ -246,8 +270,8 @@ namespace GEM
             {
                 // block was released this frame
                 _isBlocking = false;
-                playerMovementController?.SetIsPerformingAction(false);
-                playerAnimationController?.SetBlock(false);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
+                PlayerAnimationController.Instance.SetBlock(false);
                 // reset consumed flag so next new hold can attempt parry (subject to cooldown)
                 _parryConsumedThisHold = false;
                 _isInParryWindow = false;
@@ -255,43 +279,33 @@ namespace GEM
             }
 
             _wasBlocking = blockHeld;
-         }
+        }
 
         private void OnAttackAnimationEnded()
         {
-            playerMovementController?.SetIsPerformingAction(false);
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
         }
 
-        private void OnDrawGizmos()
+        public void ApplyMeleeAttackDamagePowerup(float value)
         {
-            float attackRange = baseMeleeAttackRange;
-            float attackAngle = 90f;
-            Vector3 origin = transform.position + Vector3.up;
-            Vector3 forward = transform.forward;
-
-            if (_attackDelta > 0|| _attackComboDelta > 0)
-            {
-                //transparent red when on cooldown
-                Handles.color = new Color(1f, 0f, 0f, 0.3f);
-            }
-            else
-            {
-                Handles.color = new Color(0f, 1f, 0f, 0.3f);
-            }
-            Handles.DrawSolidArc(origin, Vector3.up, Quaternion.Euler(0, -attackAngle/2, 0) * forward, attackAngle, attackRange);
+            MeleeAttackDamageBonus += value;
+            InitializeMeleeAttackData();
         }
 
-        private void OnGUI()
+        public void ApplyMeleeAttackKnockbackPowerup(float value)
         {
-            // Small debug overlay for testing states
-            GUILayout.BeginArea(new Rect(10, 10, 220, 140), "Player Debug", GUI.skin.window);
-            GUILayout.Label($"IsBlocking: {_isBlocking}");
-            GUILayout.Label($"IsInParryWindow: {_isInParryWindow}");
-            GUILayout.Label($"ParryActivationCooldown: {_parryActivationTimer:F2}");
-            GUILayout.Label($"AttackCooldown: {_attackDelta:F2}");
-            GUILayout.Label($"ComboIndex: {_attackComboNum}");
-            GUILayout.Label($"RangedCooldown: {_rangedAttackDelta:F2}");
-            GUILayout.EndArea();
+            MeleeAttackKnockbackBonus += value;
+            InitializeMeleeAttackData();
+        }
+
+        public void ApplyRangedAttackDamagePowerup(float value)
+        {
+            RangedAttackDamageBonus += value;
+        }
+
+        public void ApplyRangedAttackKnockbackPowerup(float value)
+        {
+            RangedAttackKnockbackBonus += value;
         }
     }
 }

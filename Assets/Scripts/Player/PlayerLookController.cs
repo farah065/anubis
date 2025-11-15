@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace GEM
 {
-    public class PlayerLookController : MonoBehaviour
+    public class PlayerLookController : Singleton<PlayerLookController>
     {
         public Vector3 CurrentAimDirection { get; private set; }
 
