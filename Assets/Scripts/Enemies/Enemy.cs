@@ -21,7 +21,6 @@ public abstract class Enemy : MonoBehaviour
     public EnemyState CurrentState;
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
-    [SerializeField] protected SphereCollider _detectionCollider;
     [SerializeField] protected MMF_Player _onHitFeedbacks;
 
     [Header("Feedbacks")]
