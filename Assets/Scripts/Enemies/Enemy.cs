@@ -1,4 +1,5 @@
 using System.Collections;
+using GEM;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,7 +18,6 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
     [SerializeField] protected EnemyState _currentState;
-    [SerializeField] protected SphereCollider _detectionCollider;
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
@@ -68,27 +68,31 @@ public abstract class Enemy : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        Debug.Log($"Name: {other.gameObject.name}, Tag: {other.gameObject.tag}");
+        AttackData attack = other.GetComponent<AttackData>();
+        if (attack != null)
         {
-            // start checking for line of sight
-            _playerDetectionCoroutine = StartCoroutine(PlayerDetectionCoroutine(other));
+            Vector3 forceDirection = (transform.position - other.transform.position).normalized;
+            int damage = attack.attackDamage;
+            Vector3 force = forceDirection * attack.knockbackForce;
+            OnHit(damage, force);
+
         }
     }
 
-    protected void OnTriggerExit(Collider other)
+    public void OnDetectionEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            // stop checking for line of sight
-            StopCoroutine(_playerDetectionCoroutine);
-        }
+        _playerDetectionCoroutine = StartCoroutine(PlayerDetectionCoroutine(other));
+    }
+
+    public void OnDetectionExit(Collider other)
+    {
+        StopCoroutine(_playerDetectionCoroutine);
     }
 
     protected void OnDrawGizmos()
     {
-        // player detection and attack zones
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _enemyData.PlayerDetectionRadius);
+        // attack zones
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _enemyData.AttackZoneRadius);
 
@@ -104,10 +108,9 @@ public abstract class Enemy : MonoBehaviour
     #endregion
 
     #region public methods
-    // TODO: hook this up with player
-    public virtual void OnHit()
+    public EnemyScriptableObject GetEnemyData()
     {
-        TakeDamage(10);
+        return _enemyData;
     }
     #endregion
 
@@ -123,8 +126,7 @@ public abstract class Enemy : MonoBehaviour
 
         // initialise the hp
         _currentHp = _enemyData.MaxHp;
-        // ensure the detection collider radius matches the scriptable object's detection radius
-        _detectionCollider.radius = _enemyData.PlayerDetectionRadius;
+
     }
 
     protected IEnumerator PatrolRoutine()
@@ -215,9 +217,26 @@ public abstract class Enemy : MonoBehaviour
     }
 
     #region virtual
-    protected virtual void TakeDamage(float damage)
+
+    // TODO: hook this up with player
+    public virtual void OnHit(int damage, Vector3 force)
     {
+        TakeDamage(damage, force);
+        Debug.Log("Enemy  hit!");
+    }
+
+    protected virtual void TakeDamage(int damage, Vector3 force)
+    {
+        Debug.Log($"HP was: {_currentHp}");
         _currentHp -= damage;
+        Debug.Log($"HP now: {_currentHp}");
+
+
+        if (force.sqrMagnitude > 0.0001f)
+        {
+            Vector3 targetPosition = transform.position + force;
+            Agent.Warp(targetPosition);
+        }
 
         if (_currentHp <= 0)
         {

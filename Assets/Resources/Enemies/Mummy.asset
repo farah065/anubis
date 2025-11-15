@@ -17,7 +17,7 @@ MonoBehaviour:
   AngularSpeed: 330
   Acceleration: 8
   StoppingDistance: 1
-  MaxHp: 20
+  MaxHp: 100
   Damage: 5
   AttackCooldown: 3
   PlayerDetectionRadius: 10
