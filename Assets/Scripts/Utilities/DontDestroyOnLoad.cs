@@ -10,5 +10,12 @@ public class DontDestroyOnLoad : MonoBehaviour
         {
             DontDestroyOnLoad(obj);
         }
+
+        objs = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject obj in objs)
+        {
+            DontDestroyOnLoad(obj);
+        }
     }
 }
