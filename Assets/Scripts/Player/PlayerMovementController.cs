@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace GEM
 {
-    public class PlayerMovementController : MonoBehaviour
+    public class PlayerMovementController : Singleton<PlayerMovementController>
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -42,9 +42,6 @@ namespace GEM
 
         [Tooltip("What layers the character uses as ground")]
         public LayerMask groundLayers;
-
-        [Header("Feedbacks")] // remove individual feedbacks now handled by animation controller
-        [SerializeField] private PlayerAnimationController animationController;
 
         //player
         private float _speed;
@@ -117,7 +114,7 @@ namespace GEM
             grounded = Physics.CheckSphere(spherePosition, groundedRadius, groundLayers,
                 QueryTriggerInteraction.Ignore);
 
-            animationController?.SetGrounded(grounded);
+            PlayerAnimationController.Instance.SetGrounded(grounded);
         }
 
         private void Move()
@@ -178,7 +175,7 @@ namespace GEM
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-            animationController?.SetSpeed(_animationBlend, inputMagnitude);
+            PlayerAnimationController.Instance.SetSpeed(_animationBlend, inputMagnitude);
         }
 
         private void ApplyGravity()
@@ -187,7 +184,7 @@ namespace GEM
             {
                 // reset the fall timeout timer and exit free fall when grounded
                 _fallTimeoutDelta = fallTimeout;
-                animationController?.SetFreeFall(false);
+                PlayerAnimationController.Instance.SetFreeFall(false);
 
                 // small downward force to keep grounded contact
                 if (_verticalVelocity < 0.0f)
@@ -204,7 +201,7 @@ namespace GEM
                 }
                 else
                 {
-                    animationController?.SetFreeFall(true);
+                    PlayerAnimationController.Instance.SetFreeFall(true);
                 }
             }
 
@@ -234,10 +231,10 @@ namespace GEM
                     // Dash finished, start cooldown
                     _isDashing = false;
                     _dashTimeoutDelta = dashTimeout; // Start cooldown timer
-                    animationController?.SetDash(false);
+                    PlayerAnimationController.Instance.SetDash(false);
                 }
 
-                animationController?.SetDash(true); // ensure dash state during dash
+                PlayerAnimationController.Instance.SetDash(true); // ensure dash state during dash
                 return;
             }
 
@@ -270,11 +267,11 @@ namespace GEM
                 _isDashing = true;
                 _dashTimeRemaining = dashDistance / dashSpeed;
 
-                animationController?.SetDash(true);
+                PlayerAnimationController.Instance.SetDash(true);
             }
             else
             {
-                animationController?.SetDash(false);
+                PlayerAnimationController.Instance.SetDash(false);
             }
         }
 

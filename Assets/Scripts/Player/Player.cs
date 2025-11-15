@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GEM
 {
-    public class Player : MonoBehaviour
+    public class Player : Singleton<Player>
     {
         public float health = 100;
 
@@ -17,7 +17,8 @@ namespace GEM
             AttackData attack = other.GetComponent<AttackData>();
             if (attack != null)
             {
-                Vector3 forceDirection = (transform.position - other.transform.root.position).normalized; //using transform.root here to get the transform of the player (parent), this may cause issues with other damage dealing objects
+                Vector3 forceDirection = (transform.position - other.transform.root.position).normalized;
+                forceDirection.y = 0;
                 float damage = attack.attackDamage;
                 Vector3 force = forceDirection * attack.knockbackForce;
                 OnHit(damage, force);
@@ -36,6 +37,8 @@ namespace GEM
             health -= damage;
             Debug.Log($"HP now: {health}");
         }
+
+
 
     }
 }

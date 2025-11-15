@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 
@@ -12,18 +12,12 @@ using UnityEngine.InputSystem;
 
 namespace GEM
 {
-    public class PlayerActionController : MonoBehaviour
+    public class PlayerActionController : Singleton<PlayerActionController>
     {
-        [Header("References")]
-        [SerializeField] private PlayerMovementController playerMovementController;
-        [SerializeField] private PlayerLookController playerLookController;
-        [SerializeField] private PlayerAnimationController playerAnimationController;
-
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
         [SerializeField] private Animator anim;
         [SerializeField] private AnimatorStateInfo _state;
         [SerializeField] private GameObject axeHitbox;
-
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput;
@@ -52,7 +46,6 @@ namespace GEM
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
         [SerializeField] private float baseRangedAttackArea = 0f;
         [SerializeField] private float rangedAttackCooldown = 5f;
-        public AttackData rangedAttackData;
 
         [Header("Block Settings")]
         [SerializeField] private float baseBlockEfficiency = 0.5f;
@@ -86,18 +79,6 @@ namespace GEM
         {
             meleeAttackData.Initialize((int)baseMeleeAttackDamage, baseMeleeAttackKnockback);
 
-            if (playerMovementController == null)
-            {
-                Debug.LogWarning("Player Movement Controller not assigned in Player Action Controller.");
-                playerMovementController = FindFirstObjectByType<PlayerMovementController>();
-            }
-
-            if (playerLookController == null)
-            {
-                Debug.LogWarning("Player Look Controller not assigned in Player Action Controller.");
-                playerLookController = FindFirstObjectByType<PlayerLookController>();
-            }
-
             // cache block action if possible
             if (playerInput != null && playerInput.currentActionMap != null)
             {
@@ -107,7 +88,7 @@ namespace GEM
                 _meleeAction = map.FindAction("Melee Attack") ?? map.FindAction("MeleeAttack");
                 _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
             }
-            anim = playerAnimationController.Animator;
+            anim = PlayerAnimationController.Instance.Animator;
         }
 
         private void Update()
@@ -128,7 +109,7 @@ namespace GEM
                 _clicks = 0;
                 anim.SetInteger("AttackIndex", 0);
                 anim.SetBool("ReturnToIdle", true);
-                playerMovementController?.SetIsPerformingAction(false);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
             }
             if (_meleeAction != null && _meleeAction.WasPerformedThisFrame())
             {
@@ -147,8 +128,8 @@ namespace GEM
             {
                 _clicks = 1;
                 _isAttacking = true;
-                playerMovementController?.SetIsPerformingAction(true);
-                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
                 //animator params
                 //Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
@@ -173,8 +154,8 @@ namespace GEM
             {
                 int nextStep = currentStep + 1;
                 nextStep = Mathf.Clamp(nextStep, 1, 3);
-                playerMovementController?.SetIsPerformingAction(true);
-                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
                 //anim params
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", nextStep);
@@ -188,7 +169,7 @@ namespace GEM
             anim.SetInteger("AttackIndex", 0);
             anim.SetBool("ReturnToIdle", true);
             //Debug.Log("Combo Ended");
-            playerMovementController?.SetIsPerformingAction(false);
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
         }
 
         private bool IsInStateOrTransition(string stateName)
@@ -206,7 +187,7 @@ namespace GEM
             if (!rangedTriggered || _rangedAttackDelta > 0f) return;
 
             //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+            PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
 
             // instantiate projectile if prefab assigned
             if (projectilePrefab != null)
@@ -254,8 +235,8 @@ namespace GEM
             {
                 // begin blocking
                 _isBlocking = true;
-                playerMovementController?.SetIsPerformingAction(true);
-                playerAnimationController?.SetBlock(true);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerAnimationController.Instance.SetBlock(true);
                 // mark parry as potentially consumable this hold
                 _parryConsumedThisHold = false;
 
@@ -276,8 +257,8 @@ namespace GEM
             {
                 // block was released this frame
                 _isBlocking = false;
-                playerMovementController?.SetIsPerformingAction(false);
-                playerAnimationController?.SetBlock(false);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
+                PlayerAnimationController.Instance.SetBlock(false);
                 // reset consumed flag so next new hold can attempt parry (subject to cooldown)
                 _parryConsumedThisHold = false;
                 _isInParryWindow = false;
@@ -290,7 +271,7 @@ namespace GEM
 
         private void OnAttackAnimationEnded()
         {
-            playerMovementController?.SetIsPerformingAction(false);
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
         }
     }
 }

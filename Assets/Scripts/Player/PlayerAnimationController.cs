@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GEM
 {
     [DisallowMultipleComponent]
-    public class PlayerAnimationController : MonoBehaviour
+    public class PlayerAnimationController : Singleton<PlayerAnimationController>
     {
         [Header("References")]
         [SerializeField] private Animator animator;

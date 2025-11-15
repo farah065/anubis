@@ -1,0 +1,16 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Root" style="flex-grow: 1; justify-content: center; padding-top: 20%; padding-right: 20%; padding-bottom: 20%; padding-left: 20%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;">
+        <ui:Button name="Item1">
+            <ui:Label text="Label" name="Title" style="align-items: flex-start; align-self: flex-start; width: auto; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 64px;" />
+            <ui:Label text="Label" name="Description" style="align-items: center; align-self: flex-start; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 48px;" />
+        </ui:Button>
+        <ui:Button name="Item2">
+            <ui:Label text="Label" name="Title" style="align-items: flex-start; align-self: flex-start; width: auto; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 64px;" />
+            <ui:Label text="Label" name="Description" style="align-items: center; align-self: flex-start; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 48px;" />
+        </ui:Button>
+        <ui:Button name="Item3">
+            <ui:Label text="Label" name="Title" style="align-items: flex-start; align-self: flex-start; width: auto; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 64px;" />
+            <ui:Label text="Label" name="Description" style="align-items: center; align-self: flex-start; -unity-font-definition: url(&quot;project://database/Assets/ThirdParty/Feel/MMTools/Foundation/MMAchievements/Fonts/orange%20kid.ttf?fileID=12800000&amp;guid=0f03458534bea45e4bba9ab3411321b2&amp;type=3#orange kid&quot;); font-size: 48px;" />
+        </ui:Button>
+    </ui:VisualElement>
+</ui:UXML>
