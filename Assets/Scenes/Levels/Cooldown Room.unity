@@ -569,6 +569,7 @@ MonoBehaviour:
   - {fileID: 102900000, guid: e7557b16dd197d941b6125e411161843, type: 3}
   - {fileID: 102900000, guid: 874a0964b4fc47f4298f4916b43c838f, type: 3}
   - {fileID: 102900000, guid: 15915b31f50a95647a3c4ae71d00608b, type: 3}
+  cooldownRoom: {fileID: 102900000, guid: c53519b73c060aa4d83786ed12bf0490, type: 3}
   levelSceneNames:
   - Level 1
   - Level 2
@@ -637,6 +638,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3960907537761973239, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1548838666}
     - target: {fileID: 4416926081852918481, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_Name
       value: Player

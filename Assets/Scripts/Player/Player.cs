@@ -6,6 +6,20 @@ namespace GEM
     public class Player : MonoBehaviour
     {
         public float health = 100;
+        [SerializeField] private GameManager gameManager;
+
+        private void Start()
+        {
+            if (gameManager == null)
+            {
+                gameManager = FindObjectOfType<GameManager>();
+            }
+
+            if (gameManager == null)
+            {
+                Debug.LogError("GameManager not found in scene!");
+            }
+        }
 
         public void OnTriggerEnter(Collider other)
         {
@@ -36,6 +50,10 @@ namespace GEM
             Debug.Log($"HP was: {health}");
             health -= damage;
             Debug.Log($"HP now: {health}");
+            if (health <= 0)
+            {
+                gameManager.ReturnToCooldownRoom();
+            }
         }
 
     }
