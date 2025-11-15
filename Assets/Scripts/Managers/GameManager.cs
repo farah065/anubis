@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
+using GEM;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
 #if UNITY_EDITOR
     [SerializeField] private List<SceneAsset> levelScenes;
@@ -30,6 +32,26 @@ public class GameManager : MonoBehaviour
         }
     }
 #endif
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StartCoroutine(TeleportNextFrame());
+    }
+
+    IEnumerator TeleportNextFrame()
+    {
+        yield return null; // wait 1 frame
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+
+        player.transform.position = spawnPoint.transform.position; 
+        player.transform.rotation = spawnPoint.transform.rotation;
+    }
 
     public void LoadRandomLevel()
     {
@@ -62,5 +84,7 @@ public class GameManager : MonoBehaviour
     public void ReturnToCooldownRoom()
     {
         SceneManager.LoadScene(cooldownRoom.name);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        player.GetComponent<Player>().health = 100;
     }
 }

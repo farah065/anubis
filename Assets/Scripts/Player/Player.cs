@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GEM
 {
-    public class Player : MonoBehaviour
+    public class Player : Singleton<Player>
     {
         public float health = 100;
         [SerializeField] private GameManager gameManager;
