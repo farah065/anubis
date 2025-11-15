@@ -43,12 +43,14 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         Mummy enemy = Instantiate(_mummyPrefab);
         enemy.SetPool(_mummyPool);
+        enemy.enabled = true;
         return enemy;
     }
 
     private void OnGetMummy(Mummy enemy)
     {
         enemy.gameObject.SetActive(true);
+        enemy.enabled = true;
     }
 
     private void OnReleaseMummy(Mummy enemy)
@@ -89,7 +91,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
             Vector3 candidate = center + new Vector3(offset.x, 0f, offset.y);
 
             // get closest point on navmesh
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
             {
                 Vector3 navPos = hit.position;
 

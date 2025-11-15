@@ -2,7 +2,9 @@ using System.Collections;
 using GEM;
 using MoreMountains.Feedbacks;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.AI;
+using MoreMountains.Feedbacks;
 
 public enum EnemyState
 {
@@ -16,10 +18,15 @@ public abstract class Enemy : MonoBehaviour
     public NavMeshAgent Agent;
     public Animator Animator;
     public Vector3 InitialPosition;
+    public EnemyState CurrentState;
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
-    [SerializeField] protected EnemyState _currentState;
+    [SerializeField] protected SphereCollider _detectionCollider;
     [SerializeField] protected MMF_Player _onHitFeedbacks;
+
+    [Header("Feedbacks")]
+    [SerializeField] protected MMF_Player _deathFeedbacks;
+    [SerializeField] protected MMF_Player _spawnFeedbacks;
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
@@ -38,6 +45,12 @@ public abstract class Enemy : MonoBehaviour
         StartCoroutine(PatrolRoutine());
     }
 
+    protected void OnDisable()
+    {
+        // stop all coroutines when disabled
+        StopAllCoroutines();
+    }
+
     protected void Update()
     {
         if (_knockbackTimeRemaining > 0f && _knockbackVelocity.sqrMagnitude > 0.0001f)
@@ -47,7 +60,7 @@ public abstract class Enemy : MonoBehaviour
         }
 
         // constantly update the agent destination if it's following the player
-        if (_currentState == EnemyState.Following && _targetGameObj != null)
+        if (CurrentState == EnemyState.Following && _targetGameObj != null)
         {
             Agent.SetDestination(_targetGameObj.transform.position);
         }
@@ -60,14 +73,14 @@ public abstract class Enemy : MonoBehaviour
         float targetSpeed = 0f;
         if (Agent.hasPath && Agent.remainingDistance > Agent.stoppingDistance)
         {
-            targetSpeed = _currentState == EnemyState.Following ? _enemyData.FollowSpeed : _enemyData.PatrolSpeed;
+            targetSpeed = CurrentState == EnemyState.Following ? _enemyData.FollowSpeed : _enemyData.PatrolSpeed;
         }
 
         Agent.speed = Mathf.MoveTowards(Agent.speed, targetSpeed, Agent.acceleration * Time.deltaTime);
         Animator.SetFloat("speed", Agent.speed);
 
         // check if we can attack the player
-        if (_currentState == EnemyState.Following && _targetGameObj != null && _canAttack)
+        if (CurrentState == EnemyState.Following && _targetGameObj != null && _canAttack)
         {
             float distanceToTarget = Vector3.Distance(transform.position, _targetGameObj.transform.position);
             if (distanceToTarget <= _enemyData.AttackZoneRadius)
@@ -126,8 +139,10 @@ public abstract class Enemy : MonoBehaviour
     #endregion
 
     #region protected methods
-    protected void Initialise()
+    protected virtual void Initialise()
     {
+        _spawnFeedbacks?.PlayFeedbacks();
+
         // set agent parameters from scriptable object
         Agent.speed = _enemyData.FollowSpeed;
         Agent.speed = _enemyData.PatrolSpeed;
@@ -142,9 +157,9 @@ public abstract class Enemy : MonoBehaviour
 
     protected IEnumerator PatrolRoutine()
     {
-        _currentState = EnemyState.Patrolling;
+        CurrentState = EnemyState.Patrolling;
 
-        while (_currentState == EnemyState.Patrolling)
+        while (CurrentState == EnemyState.Patrolling)
         {
             Patrol();
 
@@ -210,7 +225,7 @@ public abstract class Enemy : MonoBehaviour
                 if (hit.collider.CompareTag("Player"))
                 {
                     _targetGameObj = other.gameObject;
-                    _currentState = EnemyState.Following;
+                    CurrentState = EnemyState.Following;
                     yield break;
                 }
             }
@@ -265,7 +280,8 @@ public abstract class Enemy : MonoBehaviour
     // TODO: add death animation and loot drop
     protected virtual void Die()
     {
-        Debug.Log("Enemy died");
+        CurrentState = EnemyState.Dying;
+        _deathFeedbacks?.PlayFeedbacks();
     }
     #endregion
     #endregion
