@@ -7,7 +7,7 @@ namespace GEM
         public float attackDamage = 0;
         public float knockbackForce = 0;
 
-        public void Initialize(int damage, float knockback)
+        public void Initialize(float damage, float knockback)
         {
             attackDamage = damage;
             knockbackForce = knockback;

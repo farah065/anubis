@@ -6,6 +6,9 @@ namespace GEM
     public class Player : Singleton<Player>
     {
         public float health = 100;
+        public float maxHealth = 100;
+        public float baseHealth = 100;
+        public float healthBonus = 0;
 
         public void OnTriggerEnter(Collider other)
         {
@@ -38,7 +41,40 @@ namespace GEM
             Debug.Log($"HP now: {health}");
         }
 
+        public void ApplyMaxHealthPowerup(float value)
+        {
+            healthBonus += value;
+            maxHealth = maxHealth + (maxHealth * (healthBonus / 100));
+            health = health + (health * (healthBonus / 100));
+        }
 
 
+        public void ApplyPowerup(PowerupData powerup)
+        {
+            switch (powerup.property)
+            {
+                case PlayerProperty.MaxHealth:
+                    ApplyMaxHealthPowerup(powerup.value);
+                    break;
+                case PlayerProperty.MeleeAttackDamage:
+                    PlayerActionController.Instance.ApplyMeleeAttackDamagePowerup(powerup.value);
+                    break;
+                case PlayerProperty.MeleeAttackKnockback:
+                    PlayerActionController.Instance.ApplyMeleeAttackKnockbackPowerup(powerup.value);
+                    break;
+                case PlayerProperty.RangedAttackDamage:
+                    PlayerActionController.Instance.ApplyRangedAttackDamagePowerup(powerup.value);
+                    break;
+                case PlayerProperty.RangedAttackKnockback:
+                    PlayerActionController.Instance.ApplyRangedAttackKnockbackPowerup(powerup.value);
+                    break;
+                case PlayerProperty.MovementSpeed:
+                    PlayerMovementController.Instance.ApplyMovementSpeedPowerup(powerup.value);
+                    break;
+                default:
+                    Debug.LogWarning("Unknown powerup property");
+                    break;
+            }
+        }
     }
 }

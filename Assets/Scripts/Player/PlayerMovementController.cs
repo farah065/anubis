@@ -9,6 +9,8 @@ namespace GEM
         [Tooltip("Move speed of the character in m/s")]
         public float moveSpeed = 2.0f;
 
+        public float moveSpeedBonus = 0.0f;
+
         [Tooltip("How fast the character turns to face movement direction")] [Range(0.0f, 0.3f)]
         public float rotationSmoothTime = 0.12f;
 
@@ -127,7 +129,7 @@ namespace GEM
             Vector2 moveInput = _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
 
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = moveSpeed;
+            float targetSpeed = moveSpeed + (moveSpeed * (moveSpeedBonus/100));
 
             if (moveInput == Vector2.zero) targetSpeed = 0.0f;
 
@@ -287,5 +289,10 @@ namespace GEM
 
         }
         public void SetIsPerformingAction(bool isPerforming) { _isPerformingAction = isPerforming; }
+
+        public void ApplyMovementSpeedPowerup(float value)
+        {
+            moveSpeedBonus += value;
+        }
     }
 }

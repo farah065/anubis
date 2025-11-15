@@ -25,8 +25,10 @@ namespace GEM
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
         [SerializeField] private float baseMeleeAttackDamage = 10;
+        public float MeleeAttackDamageBonus = 0.0f;
         [SerializeField] private float baseMeleeAttackSpeed = 1f;
         [SerializeField] private float baseMeleeAttackKnockback = 5f;
+        public float MeleeAttackKnockbackBonus = 0.0f;
         public AttackData meleeAttackData;
 
         public float meleeAttackCooldownTime = 2f;
@@ -42,7 +44,9 @@ namespace GEM
         [Header("Ranged Attack Settings")]
         [SerializeField] private float baseRangedAttackRange = 10f;
         [SerializeField] private float baseRangedAttackDamage = 8;
+        public float RangedAttackDamageBonus = 0.0f;
         [SerializeField] private float baseRangedAttackKnockback = 1f;
+        public float RangedAttackKnockbackBonus = 0.0f;
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
         [SerializeField] private float baseRangedAttackArea = 0f;
         [SerializeField] private float rangedAttackCooldown = 5f;
@@ -77,7 +81,7 @@ namespace GEM
 
         void Awake()
         {
-            meleeAttackData.Initialize((int)baseMeleeAttackDamage, baseMeleeAttackKnockback);
+            InitializeMeleeAttackData();
 
             // cache block action if possible
             if (playerInput != null && playerInput.currentActionMap != null)
@@ -89,6 +93,13 @@ namespace GEM
                 _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
             }
             anim = PlayerAnimationController.Instance.Animator;
+        }
+
+        private void InitializeMeleeAttackData()
+        {
+            float damage = baseMeleeAttackDamage + (baseMeleeAttackDamage * (MeleeAttackDamageBonus/100));
+            float knockback = baseMeleeAttackKnockback + (baseMeleeAttackKnockback * (MeleeAttackKnockbackBonus/100));
+            meleeAttackData.Initialize(damage, knockback);
         }
 
         private void Update()
@@ -196,9 +207,11 @@ namespace GEM
                 Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
                 var proj = go.GetComponent<PlayerProjectile>();
+                float damage = baseRangedAttackDamage + (baseRangedAttackDamage * (RangedAttackDamageBonus/100));
+                float knockback = baseRangedAttackKnockback + (baseRangedAttackKnockback * (RangedAttackKnockbackBonus/100));
                 if (proj != null)
                 {
-                    proj.Initialize(baseRangedAttackDamage, baseMeleeAttackKnockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
+                    proj.Initialize(damage, knockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
                 }
             }
             else
@@ -268,10 +281,31 @@ namespace GEM
             _wasBlocking = blockHeld;
         }
 
-
         private void OnAttackAnimationEnded()
         {
             PlayerMovementController.Instance.SetIsPerformingAction(false);
+        }
+
+        public void ApplyMeleeAttackDamagePowerup(float value)
+        {
+            MeleeAttackDamageBonus += value;
+            InitializeMeleeAttackData();
+        }
+
+        public void ApplyMeleeAttackKnockbackPowerup(float value)
+        {
+            MeleeAttackKnockbackBonus += value;
+            InitializeMeleeAttackData();
+        }
+
+        public void ApplyRangedAttackDamagePowerup(float value)
+        {
+            RangedAttackDamageBonus += value;
+        }
+
+        public void ApplyRangedAttackKnockbackPowerup(float value)
+        {
+            RangedAttackKnockbackBonus += value;
         }
     }
 }

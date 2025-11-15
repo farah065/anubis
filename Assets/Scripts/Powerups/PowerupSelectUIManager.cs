@@ -31,6 +31,7 @@ namespace GEM
             Debug.Log($"Property: {selectedPowerup.property}");
             Debug.Log($"Value: {selectedPowerup.value}");
 
+            Player.Instance.ApplyPowerup(selectedPowerup);
             intiatingPickup.ClosePowerupUI();
         }
 
