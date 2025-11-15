@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 
@@ -12,18 +12,12 @@ using UnityEngine.InputSystem;
 
 namespace GEM
 {
-    public class PlayerActionController : MonoBehaviour
+    public class PlayerActionController : Singleton<PlayerActionController>
     {
-        [Header("References")]
-        [SerializeField] private PlayerMovementController playerMovementController;
-        [SerializeField] private PlayerLookController playerLookController;
-        [SerializeField] private PlayerAnimationController playerAnimationController;
-
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
         [SerializeField] private Animator anim;
         [SerializeField] private AnimatorStateInfo _state;
         [SerializeField] private GameObject axeHitbox;
-
 
         [Header("Input")]
         [SerializeField] private PlayerInput playerInput;
@@ -31,8 +25,10 @@ namespace GEM
         [Header("Melee Attack Settings")]
         [SerializeField] private float baseMeleeAttackRange = 2f;
         [SerializeField] private float baseMeleeAttackDamage = 10;
+        public float MeleeAttackDamageBonus = 0.0f;
         [SerializeField] private float baseMeleeAttackSpeed = 1f;
         [SerializeField] private float baseMeleeAttackKnockback = 5f;
+        public float MeleeAttackKnockbackBonus = 0.0f;
         public AttackData meleeAttackData;
 
         public float meleeAttackCooldownTime = 2f;
@@ -48,11 +44,12 @@ namespace GEM
         [Header("Ranged Attack Settings")]
         [SerializeField] private float baseRangedAttackRange = 10f;
         [SerializeField] private float baseRangedAttackDamage = 8;
+        public float RangedAttackDamageBonus = 0.0f;
         [SerializeField] private float baseRangedAttackKnockback = 1f;
+        public float RangedAttackKnockbackBonus = 0.0f;
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
         [SerializeField] private float baseRangedAttackArea = 0f;
         [SerializeField] private float rangedAttackCooldown = 5f;
-        public AttackData rangedAttackData;
 
         [Header("Block Settings")]
         [SerializeField] private float baseBlockEfficiency = 0.5f;
@@ -84,19 +81,7 @@ namespace GEM
 
         void Awake()
         {
-            meleeAttackData.Initialize((int)baseMeleeAttackDamage, baseMeleeAttackKnockback);
-
-            if (playerMovementController == null)
-            {
-                Debug.LogWarning("Player Movement Controller not assigned in Player Action Controller.");
-                playerMovementController = FindFirstObjectByType<PlayerMovementController>();
-            }
-
-            if (playerLookController == null)
-            {
-                Debug.LogWarning("Player Look Controller not assigned in Player Action Controller.");
-                playerLookController = FindFirstObjectByType<PlayerLookController>();
-            }
+            InitializeMeleeAttackData();
 
             // cache block action if possible
             if (playerInput != null && playerInput.currentActionMap != null)
@@ -107,7 +92,14 @@ namespace GEM
                 _meleeAction = map.FindAction("Melee Attack") ?? map.FindAction("MeleeAttack");
                 _rangedAction = map.FindAction("Ranged Attack") ?? map.FindAction("RangedAttack");
             }
-            anim = playerAnimationController.Animator;
+            anim = PlayerAnimationController.Instance.Animator;
+        }
+
+        private void InitializeMeleeAttackData()
+        {
+            float damage = baseMeleeAttackDamage + (baseMeleeAttackDamage * (MeleeAttackDamageBonus/100));
+            float knockback = baseMeleeAttackKnockback + (baseMeleeAttackKnockback * (MeleeAttackKnockbackBonus/100));
+            meleeAttackData.Initialize(damage, knockback);
         }
 
         private void Update()
@@ -128,7 +120,7 @@ namespace GEM
                 _clicks = 0;
                 anim.SetInteger("AttackIndex", 0);
                 anim.SetBool("ReturnToIdle", true);
-                playerMovementController?.SetIsPerformingAction(false);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
             }
             if (_meleeAction != null && _meleeAction.WasPerformedThisFrame())
             {
@@ -147,8 +139,8 @@ namespace GEM
             {
                 _clicks = 1;
                 _isAttacking = true;
-                playerMovementController?.SetIsPerformingAction(true);
-                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
                 //animator params
                 //Debug.Log("Setting attack0");
                 anim.SetBool("ReturnToIdle", false);
@@ -173,8 +165,8 @@ namespace GEM
             {
                 int nextStep = currentStep + 1;
                 nextStep = Mathf.Clamp(nextStep, 1, 3);
-                playerMovementController?.SetIsPerformingAction(true);
-                playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
                 //anim params
                 anim.SetBool("ReturnToIdle", false);
                 anim.SetInteger("AttackIndex", nextStep);
@@ -188,7 +180,7 @@ namespace GEM
             anim.SetInteger("AttackIndex", 0);
             anim.SetBool("ReturnToIdle", true);
             //Debug.Log("Combo Ended");
-            playerMovementController?.SetIsPerformingAction(false);
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
         }
 
         private bool IsInStateOrTransition(string stateName)
@@ -206,7 +198,7 @@ namespace GEM
             if (!rangedTriggered || _rangedAttackDelta > 0f) return;
 
             //TODO: this is always slightly off due to projectile being 1f off the ground, need to find a fix
-            playerMovementController?.SetPlayerRotation(playerLookController.CurrentAimDirection);
+            PlayerMovementController.Instance.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
 
             // instantiate projectile if prefab assigned
             if (projectilePrefab != null)
@@ -215,9 +207,11 @@ namespace GEM
                 Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
                 var proj = go.GetComponent<PlayerProjectile>();
+                float damage = baseRangedAttackDamage + (baseRangedAttackDamage * (RangedAttackDamageBonus/100));
+                float knockback = baseRangedAttackKnockback + (baseRangedAttackKnockback * (RangedAttackKnockbackBonus/100));
                 if (proj != null)
                 {
-                    proj.Initialize(baseRangedAttackDamage, baseMeleeAttackKnockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
+                    proj.Initialize(damage, knockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
                 }
             }
             else
@@ -254,8 +248,8 @@ namespace GEM
             {
                 // begin blocking
                 _isBlocking = true;
-                playerMovementController?.SetIsPerformingAction(true);
-                playerAnimationController?.SetBlock(true);
+                PlayerMovementController.Instance.SetIsPerformingAction(true);
+                PlayerAnimationController.Instance.SetBlock(true);
                 // mark parry as potentially consumable this hold
                 _parryConsumedThisHold = false;
 
@@ -276,8 +270,8 @@ namespace GEM
             {
                 // block was released this frame
                 _isBlocking = false;
-                playerMovementController?.SetIsPerformingAction(false);
-                playerAnimationController?.SetBlock(false);
+                PlayerMovementController.Instance.SetIsPerformingAction(false);
+                PlayerAnimationController.Instance.SetBlock(false);
                 // reset consumed flag so next new hold can attempt parry (subject to cooldown)
                 _parryConsumedThisHold = false;
                 _isInParryWindow = false;
@@ -287,10 +281,31 @@ namespace GEM
             _wasBlocking = blockHeld;
         }
 
-
         private void OnAttackAnimationEnded()
         {
-            playerMovementController?.SetIsPerformingAction(false);
+            PlayerMovementController.Instance.SetIsPerformingAction(false);
+        }
+
+        public void ApplyMeleeAttackDamagePowerup(float value)
+        {
+            MeleeAttackDamageBonus += value;
+            InitializeMeleeAttackData();
+        }
+
+        public void ApplyMeleeAttackKnockbackPowerup(float value)
+        {
+            MeleeAttackKnockbackBonus += value;
+            InitializeMeleeAttackData();
+        }
+
+        public void ApplyRangedAttackDamagePowerup(float value)
+        {
+            RangedAttackDamageBonus += value;
+        }
+
+        public void ApplyRangedAttackKnockbackPowerup(float value)
+        {
+            RangedAttackKnockbackBonus += value;
         }
     }
 }

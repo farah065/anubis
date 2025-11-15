@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 7902282669470520928}
   - component: {fileID: 1538432511623872921}
   - component: {fileID: 5267592810071673035}
-  - component: {fileID: 2969326080447552738}
   - component: {fileID: 8326255541377452854}
+  - component: {fileID: 6474426995804624034}
   m_Layer: 0
   m_Name: PlayerProjectile
   m_TagString: Untagged
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 41e604e53635d8f4880fd2973f0b8296, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53b39c6670653884a8dc5ca2a16e3420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rangedAttackData: {fileID: 2969326080447552738}
+  rangedAttackData: {fileID: 6474426995804624034}
   _explosionCollider: {fileID: 8326255541377452854}
 --- !u!54 &5267592810071673035
 Rigidbody:
@@ -153,20 +153,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2969326080447552738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888434345910479824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5381bcfc723d4c1fb20d44f3fe5534c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackDamage: 0
-  knockbackForce: 0
 --- !u!135 &8326255541377452854
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -188,3 +174,17 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.06
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6474426995804624034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888434345910479824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04f98e6539cd4bb9b24d374261bcbee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 0
+  knockbackForce: 0

@@ -6,6 +6,9 @@ namespace GEM
     public class Player : Singleton<Player>
     {
         public float health = 100;
+        public float maxHealth = 100;
+        public float baseHealth = 100;
+        public float healthBonus = 0;
         [SerializeField] private GameManager gameManager;
 
         private void Start()
@@ -31,8 +34,8 @@ namespace GEM
             AttackData attack = other.GetComponent<AttackData>();
             if (attack != null)
             {
-                Vector3 forceDirection = (transform.position - other.transform.root.position).normalized; //using transform.root here to get the transform of the player (parent), this may cause issues with other damage dealing objects
-                forceDirection.y = 0f;
+                Vector3 forceDirection = (transform.position - other.transform.root.position).normalized;
+                forceDirection.y = 0;
                 float damage = attack.attackDamage;
                 Vector3 force = forceDirection * attack.knockbackForce;
                 OnHit(damage, force);
@@ -56,5 +59,40 @@ namespace GEM
             }
         }
 
+        public void ApplyMaxHealthPowerup(float value)
+        {
+            healthBonus += value;
+            maxHealth = maxHealth + (maxHealth * (healthBonus / 100));
+            health = health + (health * (healthBonus / 100));
+        }
+
+
+        public void ApplyPowerup(PowerupData powerup)
+        {
+            switch (powerup.property)
+            {
+                case PlayerProperty.MaxHealth:
+                    ApplyMaxHealthPowerup(powerup.value);
+                    break;
+                case PlayerProperty.MeleeAttackDamage:
+                    PlayerActionController.Instance.ApplyMeleeAttackDamagePowerup(powerup.value);
+                    break;
+                case PlayerProperty.MeleeAttackKnockback:
+                    PlayerActionController.Instance.ApplyMeleeAttackKnockbackPowerup(powerup.value);
+                    break;
+                case PlayerProperty.RangedAttackDamage:
+                    PlayerActionController.Instance.ApplyRangedAttackDamagePowerup(powerup.value);
+                    break;
+                case PlayerProperty.RangedAttackKnockback:
+                    PlayerActionController.Instance.ApplyRangedAttackKnockbackPowerup(powerup.value);
+                    break;
+                case PlayerProperty.MovementSpeed:
+                    PlayerMovementController.Instance.ApplyMovementSpeedPowerup(powerup.value);
+                    break;
+                default:
+                    Debug.LogWarning("Unknown powerup property");
+                    break;
+            }
+        }
     }
 }
