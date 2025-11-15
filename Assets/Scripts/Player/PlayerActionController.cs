@@ -14,15 +14,13 @@ namespace GEM
 {
     public class PlayerActionController : MonoBehaviour
     {
-        [SerializeField] private LayerMask enemyLayerMask;
-
         [Header("References")]
         [SerializeField] private PlayerMovementController playerMovementController;
         [SerializeField] private PlayerLookController playerLookController;
         [SerializeField] private PlayerAnimationController playerAnimationController;
 
         [SerializeField] private GameObject projectilePrefab; // for ranged attacks
-        [SerializeField] private Animator anim; 
+        [SerializeField] private Animator anim;
         [SerializeField] private AnimatorStateInfo _state;
         [SerializeField] private GameObject axeHitbox;
 
@@ -136,7 +134,7 @@ namespace GEM
             {
                 OnMeleeClick();
             }
-            
+
 
         }
 
@@ -144,7 +142,7 @@ namespace GEM
         {
             _lastClickedTime = Time.time;
             //Debug.Log($"is attacking? : {isAttacking}");
-            
+
             if(!_isAttacking)
             {
                 _clicks = 1;
@@ -219,7 +217,7 @@ namespace GEM
                 var proj = go.GetComponent<PlayerProjectile>();
                 if (proj != null)
                 {
-                    proj.Initialize(baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, enemyLayerMask);
+                    proj.Initialize(baseRangedAttackDamage, baseMeleeAttackKnockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
                 }
             }
             else

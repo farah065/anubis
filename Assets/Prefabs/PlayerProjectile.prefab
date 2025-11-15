@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 7902282669470520928}
   - component: {fileID: 1538432511623872921}
   - component: {fileID: 5267592810071673035}
+  - component: {fileID: 2969326080447552738}
+  - component: {fileID: 8326255541377452854}
   m_Layer: 0
   m_Name: PlayerProjectile
   m_TagString: Untagged
@@ -104,7 +106,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -122,9 +124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53b39c6670653884a8dc5ca2a16e3420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
+  rangedAttackData: {fileID: 2969326080447552738}
+  _explosionCollider: {fileID: 8326255541377452854}
 --- !u!54 &5267592810071673035
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -152,3 +153,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2969326080447552738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888434345910479824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5381bcfc723d4c1fb20d44f3fe5534c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 0
+  knockbackForce: 0
+--- !u!135 &8326255541377452854
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888434345910479824}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 1.06
+  m_Center: {x: 0, y: 0, z: 0}

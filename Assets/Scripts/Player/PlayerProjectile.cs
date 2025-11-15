@@ -1,24 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using GEM;
 using UnityEngine;
 
 public class PlayerProjectile : MonoBehaviour
 {
     private float speed;
     private float maxDistance;
-    private float explosionRadius;
-    [SerializeField] private LayerMask enemyLayerMask;
+    [SerializeField] private AttackData rangedAttackData;
 
     private Vector3 _startPosition;
     private bool _initialized;
-    private Collider _impactCollider; // collider we actually hit (for zero-radius)
-
-    public void Initialize(float speed, float maxDistance, float explosionRadius, LayerMask enemyLayerMask)
+    [SerializeField]private SphereCollider _explosionCollider;
+    public void Initialize(float damage, float knockback, float speed, float maxDistance, float explosionRadius)
     {
+        rangedAttackData.attackDamage = damage;
+        rangedAttackData.knockbackForce = knockback;
         this.speed = speed;
         this.maxDistance = maxDistance;
-        this.explosionRadius = explosionRadius;
-        this.enemyLayerMask = enemyLayerMask;
         _startPosition = transform.position;
         _initialized = true;
+
+        _explosionCollider.radius = explosionRadius;
+        _explosionCollider.enabled = false;
     }
 
     private void Update()
@@ -33,38 +37,25 @@ public class PlayerProjectile : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        _impactCollider = collision.collider;
         Explode();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        _impactCollider = other;
         Explode();
     }
 
     private void Explode()
     {
-        if (explosionRadius > 0f)
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, enemyLayerMask);
-            foreach (var hit in hits)
-            {
-                var enemy = hit.GetComponent<TestEnemy>();
-                if (enemy != null) enemy.OnHit();
-            }
-        }
-        else
-        {
-            if (_impactCollider != null && _impactCollider.gameObject.layer == enemyLayerMask)
-            {
-                var enemy = _impactCollider.GetComponent<TestEnemy>();
-                if (enemy != null) enemy.OnHit();
-            }
-        }
-
+        StartCoroutine(EnableColliderTemporarily());
         Destroy(gameObject);
+    }
+
+    private IEnumerator EnableColliderTemporarily()
+    {
+        _explosionCollider.enabled = true;
+        yield return new WaitForSeconds(0.1f);
     }
 }

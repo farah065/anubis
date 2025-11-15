@@ -91,15 +91,13 @@ public abstract class Enemy : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Name: {other.gameObject.name}, Tag: {other.gameObject.tag}");
         AttackData attack = other.GetComponent<AttackData>();
         if (attack != null)
         {
             Vector3 forceDirection = (transform.position - other.transform.root.position).normalized; //using transform.root here to get the transform of the player (parent), this may cause issues with other damage dealing objects
-            int damage = attack.attackDamage;
+            float damage = attack.attackDamage;
             Vector3 force = forceDirection * attack.knockbackForce;
             OnHit(damage, force);
-
         }
     }
 
@@ -243,18 +241,16 @@ public abstract class Enemy : MonoBehaviour
 
     #region virtual
 
-    public virtual void OnHit(int damage, Vector3 force)
+    public virtual void OnHit(float damage, Vector3 force)
     {
         TakeDamage(damage, force);
         _onHitFeedbacks?.PlayFeedbacks();
         Debug.Log("Enemy  hit!");
     }
 
-    protected virtual void TakeDamage(int damage, Vector3 force)
+    protected virtual void TakeDamage(float damage, Vector3 force)
     {
-        Debug.Log($"HP was: {_currentHp}");
         _currentHp -= damage;
-        Debug.Log($"HP now: {_currentHp}");
 
         if (force.sqrMagnitude > 0.0001f)
         {

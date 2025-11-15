@@ -4,8 +4,8 @@ namespace GEM
 {
     public class AttackData : MonoBehaviour
     {
-        public int attackDamage;
-        public float knockbackForce;
+        public float attackDamage = 0;
+        public float knockbackForce = 0;
 
         public void Initialize(int damage, float knockback)
         {

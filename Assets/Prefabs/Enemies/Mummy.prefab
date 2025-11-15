@@ -3340,6 +3340,7 @@ MonoBehaviour:
   _deathFeedbacks: {fileID: 5990832500895701236}
   _spawnFeedbacks: {fileID: 4460033742233672583}
   _hipTransform: {fileID: 7034658682097377673}
+  meleeAttackData: {fileID: 3537411625958259031}
 --- !u!195 &8264883413069845717
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4433,7 +4434,7 @@ PrefabInstance:
       addedObject: {fileID: 3070858309916100312}
     - targetCorrespondingSourceObject: {fileID: 2715566404302941441, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7439036270684903592}
+      addedObject: {fileID: 3537411625958259031}
     - targetCorrespondingSourceObject: {fileID: 2202449547766300210, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1632844051530681500}
@@ -4462,11 +4463,11 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.075
-  m_Height: 0.40301198
+  m_Radius: 0.11
+  m_Height: 0.76
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7439036270684903592
+--- !u!114 &3537411625958259031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4475,9 +4476,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1140934890289433591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63d3e70079d25ff49ab483e25f6ea631, type: 3}
+  m_Script: {fileID: 11500000, guid: 5381bcfc723d4c1fb20d44f3fe5534c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDamage: 0
+  knockbackForce: 0
 --- !u!137 &1930024588043605121 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3508893851846767223, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
