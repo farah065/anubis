@@ -9,6 +9,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     [Header("Mummy Settings")]
     [SerializeField] private Mummy _mummyPrefab;
+    [SerializeField] private int _groupsToSpawn = 2;
     [SerializeField] private float _spawnRadius = 2f;  // radius around spawn point
     [SerializeField] private int _minEnemies = 2;
     [SerializeField] private int _maxEnemies = 5;
@@ -25,6 +26,14 @@ public class EnemySpawner : Singleton<EnemySpawner>
         base.Awake();
         // create enemy pools
         _mummyPool = new ObjectPool<Mummy>(CreateMummy, OnGetMummy, OnReleaseMummy);
+    }
+
+    private void Start()
+    {
+        for (int i = 0; i < _groupsToSpawn; i++)
+        {
+            SpawnMummies();
+        }
     }
 
     private void Update()
@@ -66,8 +75,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
         // keep track of spawned positions to avoid overlap
         List<Vector3> spawnedPositions = new List<Vector3>();
-        int i = 0;
-        while (i < enemyCount)
+        for (int i = 0; i < enemyCount; i++)
         {
             if (TryGetValidSpawnPosition(spawnPoint.position, spawnedPositions, _minDistanceBetweenEnemies, out Vector3 spawnPos))
             {
@@ -75,7 +83,6 @@ public class EnemySpawner : Singleton<EnemySpawner>
                 enemy.transform.position = spawnPos;
                 enemy.InitialPosition = spawnPos;
                 spawnedPositions.Add(spawnPos);
-                i++;
             }
         }
     }
@@ -91,7 +98,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
             Vector3 candidate = center + new Vector3(offset.x, 0f, offset.y);
 
             // get closest point on navmesh
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
                 Vector3 navPos = hit.position;
 
@@ -114,7 +121,9 @@ public class EnemySpawner : Singleton<EnemySpawner>
             }
         }
 
-        return false;
+        return NavMesh.SamplePosition(center, out NavMeshHit fallbackHit, 1.0f, NavMesh.AllAreas)
+            ? (validPosition = fallbackHit.position) != Vector3.zero
+            : false;
     }
     #endregion
 }

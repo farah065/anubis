@@ -1,18 +1,22 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
+using GEM;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
 #if UNITY_EDITOR
     [SerializeField] private List<SceneAsset> levelScenes;
+    [SerializeField] private SceneAsset cooldownRoom;
 #endif
     [SerializeField] private List<string> levelSceneNames;
     private string lastLevelName;
+    private int levelIndex = 0;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -29,22 +33,58 @@ public class GameManager : MonoBehaviour
     }
 #endif
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StartCoroutine(TeleportNextFrame());
+    }
+
+    IEnumerator TeleportNextFrame()
+    {
+        yield return null; // wait 1 frame
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+
+        player.transform.position = spawnPoint.transform.position; 
+        player.transform.rotation = spawnPoint.transform.rotation;
+    }
+
     public void LoadRandomLevel()
     {
-        if (levelSceneNames.Count == 0)
+        if (levelIndex < 5)
         {
-            Debug.LogError("No level scenes assigned!");
-            return;
-        }
+            if (levelSceneNames.Count == 0)
+            {
+                Debug.LogError("No level scenes assigned!");
+                return;
+            }
 
-        string chosen;
-        do
+            string chosen;
+            do
+            {
+                chosen = levelSceneNames[Random.Range(0, levelSceneNames.Count)];
+            }
+            while (chosen == lastLevelName && levelSceneNames.Count > 1);
+
+            lastLevelName = chosen;
+            SceneManager.LoadScene(chosen);
+
+            levelIndex++;
+        }
+        else
         {
-            chosen = levelSceneNames[Random.Range(0, levelSceneNames.Count)];
+            ReturnToCooldownRoom();
         }
-        while (chosen == lastLevelName && levelSceneNames.Count > 1);
+    }
 
-        lastLevelName = chosen;
-        SceneManager.LoadScene(chosen);
+    public void ReturnToCooldownRoom()
+    {
+        SceneManager.LoadScene(cooldownRoom.name);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        player.GetComponent<Player>().health = 100;
     }
 }

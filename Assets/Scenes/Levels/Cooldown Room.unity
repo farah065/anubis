@@ -314,6 +314,37 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &511142787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 511142788}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: SpawnPoint
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &511142788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511142787}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.09, y: 0.37, z: -24.02}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &527673316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -569,6 +600,7 @@ MonoBehaviour:
   - {fileID: 102900000, guid: e7557b16dd197d941b6125e411161843, type: 3}
   - {fileID: 102900000, guid: 874a0964b4fc47f4298f4916b43c838f, type: 3}
   - {fileID: 102900000, guid: 15915b31f50a95647a3c4ae71d00608b, type: 3}
+  cooldownRoom: {fileID: 102900000, guid: c53519b73c060aa4d83786ed12bf0490, type: 3}
   levelSceneNames:
   - Level 1
   - Level 2
@@ -637,6 +669,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3960907537761973239, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1548838666}
     - target: {fileID: 4416926081852918481, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_Name
       value: Player
@@ -712,9 +748,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2015418016}
+  - component: {fileID: 2015418017}
   m_Layer: 0
   m_Name: --- CAMERAS ---
-  m_TagString: Untagged
+  m_TagString: DontDestroyOnLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -735,6 +772,18 @@ Transform:
   - {fileID: 1271019716}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2015418017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015418015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d404199ab6278b04db625ea05ed0de37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2121664838 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2382810566493446626, guid: 7b846d8f536f007498c941069487ce81, type: 3}
@@ -813,3 +862,4 @@ SceneRoots:
   - {fileID: 1548838667}
   - {fileID: 1871086239}
   - {fileID: 1793544752}
+  - {fileID: 511142788}

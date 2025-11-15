@@ -7,6 +7,8 @@ TagManager:
   - CinemachineTarget
   - DontDestroyOnLoad
   - PlayerAttack
+  - SpawnPoint
+  - EnemyAttack
   layers:
   - Default
   - TransparentFX
