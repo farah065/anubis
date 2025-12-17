@@ -29,7 +29,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
-    protected bool _canAttack = true;
+    protected bool _canAttack = false;
 
     protected Vector3 _knockbackVelocity;
     protected float _knockbackTimeRemaining;
@@ -113,7 +113,7 @@ public abstract class Enemy : MonoBehaviour
 
     public void OnDetectionExit(Collider other)
     {
-        StopCoroutine(_playerDetectionCoroutine);
+        StopCoroutine(PlayerDetectionCoroutine(other));
     }
 
     protected void OnDrawGizmos()
@@ -280,6 +280,7 @@ public abstract class Enemy : MonoBehaviour
     // TODO: add death animation and loot drop
     protected virtual void Die()
     {
+        _canAttack=false;
         CurrentState = EnemyState.Dying;
         _deathFeedbacks?.PlayFeedbacks();
     }
