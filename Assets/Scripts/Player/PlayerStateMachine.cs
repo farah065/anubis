@@ -11,7 +11,7 @@ namespace GEM
     {
         [Header("References")]
         [SerializeField] private GameObject projectilePrefab;
-        [SerializeField] private GameObject axeHitbox;
+        [SerializeField] private GameObject meleeAttackHitbox;
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private CharacterController controller;
 
@@ -339,11 +339,11 @@ namespace GEM
             MeleeAttackData.Initialize(damage, knockback);
         }
 
-        public void EnableAxeHitbox(bool enabled)
+        public void EnableMeleeAttackHitbox(bool enabled)
         {
-            if (axeHitbox != null)
+            if (meleeAttackHitbox != null)
             {
-                axeHitbox.SetActive(enabled);
+                meleeAttackHitbox.SetActive(enabled);
             }
         }
 

@@ -233,12 +233,12 @@ namespace GEM
             _nextAttackQueued = false;
             _lastInputTime = Time.time;
 
-            player.EnableAxeHitbox(true);
+            player.EnableMeleeAttackHitbox(true);
         }
 
         public override void Exit(PlayerStateMachine player)
         {
-            player.EnableAxeHitbox(false);
+            player.EnableMeleeAttackHitbox(false);
             PlayerAnimationController.Instance.SetMelee(-1); // Reset melee parameter
         }
 
@@ -310,12 +310,12 @@ namespace GEM
             _nextAttackQueued = false;
             _lastInputTime = Time.time;
 
-            player.EnableAxeHitbox(true);
+            player.EnableMeleeAttackHitbox(true);
         }
 
         public override void Exit(PlayerStateMachine player)
         {
-            player.EnableAxeHitbox(false);
+            player.EnableMeleeAttackHitbox(false);
             PlayerAnimationController.Instance.SetMelee(-1); // Reset melee parameter
         }
 
@@ -380,12 +380,12 @@ namespace GEM
 
             _lastInputTime = Time.time;
 
-            player.EnableAxeHitbox(true);
+            player.EnableMeleeAttackHitbox(true);
         }
 
         public override void Exit(PlayerStateMachine player)
         {
-            player.EnableAxeHitbox(false);
+            player.EnableMeleeAttackHitbox(false);
             PlayerAnimationController.Instance.SetMelee(-1); // Reset melee parameter
             player.StartMeleeCooldown();
         }

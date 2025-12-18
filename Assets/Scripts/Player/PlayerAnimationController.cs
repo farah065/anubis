@@ -7,8 +7,9 @@ namespace GEM
     public class PlayerAnimationController : Singleton<PlayerAnimationController>
     {
         [Header("References")]
-        [SerializeField] private Animator animator;
-        public Animator Animator => animator;
+        [SerializeField] private Animator playerAnimator;
+        [SerializeField] private Animator meleeAttackHitboxAnimator;
+        public Animator PlayerAnimator => playerAnimator;
 
         [Header("Feedbacks")]
         [SerializeField] private MMF_Player footstepFeedbacks;
@@ -29,11 +30,11 @@ namespace GEM
 
         private void Awake()
         {
-            if (animator == null)
+            if (playerAnimator == null)
             {
-                animator = GetComponent<Animator>();
+                playerAnimator = GetComponent<Animator>();
             }
-            _hasAnimator = animator != null;
+            _hasAnimator = playerAnimator != null;
             AssignAnimationIDs();
         }
 
@@ -51,29 +52,29 @@ namespace GEM
 
         public void SetGrounded(bool grounded)
         {
-            if (_hasAnimator) animator.SetBool(_animIDGrounded, grounded);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDGrounded, grounded);
         }
 
         public void SetSpeed(float blend, float motionMagnitude)
         {
             if (!_hasAnimator) return;
-            animator.SetFloat(_animIDSpeed, blend);
-            animator.SetFloat(_animIDMotionSpeed, motionMagnitude);
+            playerAnimator.SetFloat(_animIDSpeed, blend);
+            playerAnimator.SetFloat(_animIDMotionSpeed, motionMagnitude);
         }
 
         public void SetBlock(bool blocking)
         {
-            if (_hasAnimator) animator.SetBool(_animIDBlock, blocking);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDBlock, blocking);
         }
 
         public void SetFreeFall(bool freeFall)
         {
-            if (_hasAnimator) animator.SetBool(_animIDFreeFall, freeFall);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDFreeFall, freeFall);
         }
 
         public void SetDash(bool dashing)
         {
-            if (_hasAnimator) animator.SetBool(_animIDDash, dashing);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDDash, dashing);
             // Feedbacks tied to dash start/stop can be handled here (optional)
             if (dashFeedbacks != null)
             {
@@ -85,7 +86,8 @@ namespace GEM
         public void SetMelee(int stage)
         {
             if (!_hasAnimator) return;
-            animator.SetInteger(_animIDAttackIndex, stage);
+            playerAnimator.SetInteger(_animIDAttackIndex, stage);
+            meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
             meleeFeedbacks?.PlayFeedbacks();
         }
 
