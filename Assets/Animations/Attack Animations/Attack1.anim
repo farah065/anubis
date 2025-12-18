@@ -40270,9 +40270,9 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.73333335
-    functionName: ContinueCombo
+    functionName: OnMeleeAttackComplete
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 11500000, guid: 24a51b8beaa64a54b8a0bf2dab8db6d9, type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

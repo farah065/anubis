@@ -22,7 +22,6 @@ namespace GEM
         private int _animIDDash;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
-        private int _animIDAttack;
         private int _animIDAttackIndex;
         private int _animIDBlock;
 
@@ -46,7 +45,6 @@ namespace GEM
             _animIDDash = Animator.StringToHash("Dash");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-            _animIDAttack = Animator.StringToHash("Attack");
             _animIDAttackIndex = Animator.StringToHash("AttackIndex");
             _animIDBlock = Animator.StringToHash("Block");
         }
@@ -86,14 +84,8 @@ namespace GEM
 
         public void SetMelee(int stage)
         {
-            if (stage == -1)
-            {
-                animator.SetBool(_animIDAttack, false);
-                return;
-            }
             if (!_hasAnimator) return;
             animator.SetInteger(_animIDAttackIndex, stage);
-            animator.SetBool(_animIDAttack, true);
             meleeFeedbacks?.PlayFeedbacks();
         }
 
