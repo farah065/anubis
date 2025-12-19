@@ -64,17 +64,11 @@ namespace GEM
 
         public override PlayerState HandleInput(PlayerStateMachine player, InputAction action)
         {
-            // Only log when the action actually changed/was triggered
-            if (action.triggered)
-            {
-                Debug.Log($"Action triggered: {action.name} phase={action.phase}");
-                Debug.Log($"CanMeleeAttack={player.CanMeleeAttack()}, CanRangedAttack={player.CanRangedAttack()}, CanDash={player.CanDash()}");
-            }
             // Can transition to any action from idle
             if (action.name == "Melee Attack" && player.CanMeleeAttack())
             {
                 Debug.Log("Input to MeleeAttack1State");
-                return MeleeAttack1State.Instance;
+                return MeleeAttack0State.Instance;
             }
 
             if (action.name == "Ranged Attack" && player.CanRangedAttack())
@@ -118,7 +112,7 @@ namespace GEM
             // Same transitions as idle - all actions can cancel movement
             if (action.name == "Melee Attack" && player.CanMeleeAttack())
             {
-                return MeleeAttack1State.Instance;
+                return MeleeAttack0State.Instance;
             }
 
             if (action.name == "Ranged Attack" && player.CanRangedAttack())
@@ -193,7 +187,7 @@ namespace GEM
             // Dash can be canceled by any action
             if (action.name == "Melee Attack" && player.CanMeleeAttack())
             {
-                return MeleeAttack1State.Instance;
+                return MeleeAttack0State.Instance;
             }
 
             if (action.name == "Ranged Attack" && player.CanRangedAttack())
@@ -216,9 +210,9 @@ namespace GEM
 
 #region Melee Attack States (Combo Chain)
 
-    public class MeleeAttack1State : PlayerState
+    public class MeleeAttack0State : PlayerState
     {
-        public static readonly MeleeAttack1State Instance = new MeleeAttack1State();
+        public static readonly MeleeAttack0State Instance = new MeleeAttack0State();
 
         private bool _nextAttackQueued = false;
         private float _lastInputTime = 0f;
@@ -227,8 +221,7 @@ namespace GEM
         public override void Enter(PlayerStateMachine player)
         {
             player.SetIsPerformingAction(true);
-            player.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
-            PlayerAnimationController.Instance.SetMelee(0);
+            player.StartCoroutine(player.PerformMeleeAttack(0));
 
             _nextAttackQueued = false;
             _lastInputTime = Time.time;
@@ -285,7 +278,8 @@ namespace GEM
         {
             if (_nextAttackQueued && Time.time - _lastInputTime <= COMBO_WINDOW)
             {
-                return MeleeAttack2State.Instance;
+                Debug.Log("Continuing to MeleeAttack1State");
+                return MeleeAttack1State.Instance;
             }
             return IdleState.Instance;
         }
@@ -293,9 +287,9 @@ namespace GEM
         public override bool AllowsMovement() => false;
     }
 
-    public class MeleeAttack2State : PlayerState
+    public class MeleeAttack1State : PlayerState
     {
-        public static readonly MeleeAttack2State Instance = new MeleeAttack2State();
+        public static readonly MeleeAttack1State Instance = new MeleeAttack1State();
 
         private bool _nextAttackQueued = false;
         private float _lastInputTime = 0f;
@@ -304,8 +298,7 @@ namespace GEM
         public override void Enter(PlayerStateMachine player)
         {
             player.SetIsPerformingAction(true);
-            player.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
-            PlayerAnimationController.Instance.SetMelee(1);
+            player.StartCoroutine(player.PerformMeleeAttack(1));
 
             _nextAttackQueued = false;
             _lastInputTime = Time.time;
@@ -357,7 +350,8 @@ namespace GEM
         {
             if (_nextAttackQueued && Time.time - _lastInputTime <= COMBO_WINDOW)
             {
-                return MeleeAttack3State.Instance;
+                Debug.Log("Continuing to MeleeAttack1State");
+                return MeleeAttack2State.Instance;
             }
             return IdleState.Instance;
         }
@@ -365,9 +359,9 @@ namespace GEM
         public override bool AllowsMovement() => false;
     }
 
-    public class MeleeAttack3State : PlayerState
+    public class MeleeAttack2State : PlayerState
     {
-        public static readonly MeleeAttack3State Instance = new MeleeAttack3State();
+        public static readonly MeleeAttack2State Instance = new MeleeAttack2State();
 
         private float _lastInputTime = 0f;
         private const float COMBO_WINDOW = 4f;
@@ -375,8 +369,7 @@ namespace GEM
         public override void Enter(PlayerStateMachine player)
         {
             player.SetIsPerformingAction(true);
-            player.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
-            PlayerAnimationController.Instance.SetMelee(2);
+            player.StartCoroutine(player.PerformMeleeAttack(2));
 
             _lastInputTime = Time.time;
 
@@ -484,7 +477,7 @@ namespace GEM
             // Ranged attack can be canceled
             if (action.name == "Melee Attack" && player.CanMeleeAttack())
             {
-                return MeleeAttack1State.Instance;
+                return MeleeAttack0State.Instance;
             }
 
             if (action.name == "Block" && action.IsPressed())

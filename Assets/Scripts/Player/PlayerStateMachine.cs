@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace GEM
@@ -25,6 +26,7 @@ namespace GEM
         [Header("Combat Settings")]
         [SerializeField] private float baseMeleeAttackDamage = 10f;
         [SerializeField] private float baseMeleeAttackKnockback = 5f;
+        [SerializeField] private float meleeAttackLungeDistance = 0.5f;
         [SerializeField] private float baseRangedAttackDamage = 8f;
         [SerializeField] private float baseRangedAttackKnockback = 1f;
         [SerializeField] private float baseRangedAttackSpeed = 1.5f;
@@ -85,7 +87,7 @@ namespace GEM
         public float DashSpeed => dashSpeed;
         public float DashDistance => dashDistance;
 
-        void Awake()
+        void Start()
         {
             if (_mainCamera == null)
             {
@@ -144,7 +146,6 @@ namespace GEM
 
         public void ChangeState(PlayerState newState)
         {
-            Debug.Log($"Changing state to {newState.GetType().Name}");
             if (newState == null) return;
 
             _currentState?.Exit(this);
@@ -347,6 +348,22 @@ namespace GEM
             }
         }
 
+        public void ApplyMeleeAttackLunge(Vector3 dir)
+        {
+            Debug.Log("Applying melee attack lunge.");
+            // Move player forward in the direction they're facing
+            controller.Move(dir * meleeAttackLungeDistance);
+        }
+
+        
+        public IEnumerator PerformMeleeAttack(int stage)
+        {
+            SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
+            //ApplyMeleeAttackLunge(transform.forward); fuck this thing
+            PlayerAnimationController.Instance.SetMelee(stage);
+            yield return null;
+        }
+
         public void SpawnProjectile()
         {
             if (projectilePrefab != null)
@@ -372,20 +389,18 @@ namespace GEM
 
         public void OnMeleeAttackComplete()
         {
-            Debug.Log("OnMeleeAttackComplete called");
             // Called at end of each attack animation
-            if (_currentState is MeleeAttack1State attack1)
+            if (_currentState is MeleeAttack0State attack1)
             {
-                Debug.Log("Current state is MeleeAttack1State");
                 var nextState = attack1.TryContinueCombo(this);
                 ChangeState(nextState);
             }
-            else if (_currentState is MeleeAttack2State attack2)
+            else if (_currentState is MeleeAttack1State attack2)
             {
                 var nextState = attack2.TryContinueCombo(this);
                 ChangeState(nextState);
             }
-            else if (_currentState is MeleeAttack3State attack3)
+            else if (_currentState is MeleeAttack2State attack3)
             {
                 var nextState = attack3.FinishCombo(this);
                 ChangeState(nextState);

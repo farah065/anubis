@@ -1,4 +1,5 @@
-﻿using MoreMountains.Feedbacks;
+﻿using System.Collections;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 namespace GEM
@@ -8,7 +9,7 @@ namespace GEM
     {
         [Header("References")]
         [SerializeField] private Animator playerAnimator;
-        [SerializeField] private Animator meleeAttackHitboxAnimator;
+        //[SerializeField] private Animator meleeAttackHitboxAnimator; attempted to hace a custom hitbox animator but abandoned due to too much complexity
         public Animator PlayerAnimator => playerAnimator;
 
         [Header("Feedbacks")]
@@ -85,9 +86,10 @@ namespace GEM
 
         public void SetMelee(int stage)
         {
+            Debug.Log($"Setting melee attack to stage {stage}");
             if (!_hasAnimator) return;
             playerAnimator.SetInteger(_animIDAttackIndex, stage);
-            meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
+            //meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
             meleeFeedbacks?.PlayFeedbacks();
         }
 
