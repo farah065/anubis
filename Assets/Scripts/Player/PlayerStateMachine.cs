@@ -144,6 +144,8 @@ namespace GEM
 
         #region State Management
 
+        public PlayerState CurrentState => _currentState;
+
         public void ChangeState(PlayerState newState)
         {
             if (newState == null) return;
@@ -201,6 +203,8 @@ namespace GEM
         public void StartRangedCooldown() => _rangedCooldownTimer = rangedCooldownDuration;
         public void StartDashCooldown() => _dashCooldownTimer = dashCooldownDuration;
         public void StartParryCooldown() => _parryCooldownTimer = parryCooldownDuration;
+        // Immediately reset the parry cooldown timer (set to 0)
+        public void ResetParryCooldown() => _parryCooldownTimer = 0f;
 
         #endregion
 

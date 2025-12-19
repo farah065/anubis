@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace GEM
@@ -9,6 +10,8 @@ namespace GEM
         public float maxHealth = 100;
         public float baseHealth = 100;
         public float healthBonus = 0;
+        public float blockFactor = 2f;
+        public GameObject parryArcHitbox;
         [SerializeField] private GameManager gameManager;
 
         private void Start()
@@ -44,8 +47,33 @@ namespace GEM
 
         public virtual void OnHit(float damage, Vector3 force)
         {
+            var current = PlayerStateMachine.Instance.CurrentState;
+
+            // If we are in the parry window, immediately reset the parry cooldown
+            // (allowing parry again) and play the parry arc visual.
+            if (current is BlockingState blocking && blocking.IsInParryWindow)
+            {
+                PlayerStateMachine.Instance.ResetParryCooldown(); //thing
+                StartCoroutine(Parry());
+                return;
+            }
+            else if (current is BlockingState)
+            {
+                // Blocking reduces incoming damage
+                damage /= blockFactor; 
+            }
+
             TakeDamage(damage, force);
             Debug.Log("Player hit!");
+        }
+
+        private IEnumerator Parry()
+        {
+            Debug.Log("Parry successful! No damage taken.");
+
+            parryArcHitbox.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+            parryArcHitbox.SetActive(false);
         }
 
         protected virtual void TakeDamage(float damage, Vector3 force)

@@ -86,7 +86,6 @@ namespace GEM
 
         public void SetMelee(int stage)
         {
-            Debug.Log($"Setting melee attack to stage {stage}");
             if (!_hasAnimator) return;
             playerAnimator.SetInteger(_animIDAttackIndex, stage);
             //meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
