@@ -250,6 +250,10 @@ public abstract class Enemy : MonoBehaviour
     {
         TakeDamage(damage, force);
         _onHitFeedbacks?.PlayFeedbacks();
+        if (_currentHp > 0)
+        {
+            Animator.SetTrigger("hit");
+        }
         Debug.Log("Enemy  hit!");
     }
 
