@@ -7,7 +7,6 @@ namespace GEM
 {
     public class PowerupSelectUIManager : Singleton<PowerupSelectUIManager>
     {
-        //[SerializeField] private UIDocument uiDocument;
         [SerializeField] private GameObject powerupSelectUI;
         [SerializeField] private GameObject[] buttons;
         [SerializeField] private PowerupPickup intiatingPickup;

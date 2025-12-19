@@ -2,9 +2,7 @@ using System.Collections;
 using GEM;
 using MoreMountains.Feedbacks;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.AI;
-using MoreMountains.Feedbacks;
 
 public enum EnemyState
 {
@@ -29,7 +27,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected GameObject _targetGameObj;
     protected float _currentHp;
-    protected bool _canAttack = false;
+    protected bool _canAttack = true;
 
     protected Vector3 _knockbackVelocity;
     protected float _knockbackTimeRemaining;
