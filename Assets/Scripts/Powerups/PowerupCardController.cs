@@ -13,6 +13,7 @@ public class PowerupCardController : MonoBehaviour
 
     [SerializeField] private Sprite[] _raritySprites; // 0: Common, 1: Uncommon, 2: Rare, 3: Legendary
     [SerializeField] private MMF_Player _flipFeedbacks;
+    public MMF_Player DisappearFeedbacks;
 
     private PowerupData _powerupData;
     private bool _isFlipped = false;

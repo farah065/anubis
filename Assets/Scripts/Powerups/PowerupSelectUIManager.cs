@@ -1,7 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace GEM
@@ -11,11 +10,32 @@ namespace GEM
         [SerializeField] private GameObject powerupSelectUI;
         [SerializeField] private GameObject[] buttons;
         [SerializeField] private PowerupPickup intiatingPickup;
+        [SerializeField] private PowerupCardController[] powerupCardControllers;
         private List<PowerupData> currentPowerups; // Store the current powerup selection
 
         public void SetUIVisibility(bool isVisible)
         {
-            powerupSelectUI.SetActive(isVisible);
+            if (isVisible)
+            {
+                powerupSelectUI.SetActive(isVisible);
+            }
+            else
+            {
+                StartCoroutine(HideUI());
+            }
+        }
+
+        private IEnumerator HideUI()
+        {
+            foreach (var controller in powerupCardControllers)
+            {
+                controller.DisappearFeedbacks.PlayFeedbacks();
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            yield return new WaitForSeconds(0.2f);
+
+            powerupSelectUI.SetActive(false);
         }
 
         private void OnPowerupSelected(int index)
