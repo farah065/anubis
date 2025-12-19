@@ -959,7 +959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6809715399266381304
 Transform:
   m_ObjectHideFlags: 0
@@ -1911,6 +1911,7 @@ MonoBehaviour:
   maxHealth: 100
   baseHealth: 100
   healthBonus: 0
+  blockFactor: 2
   gameManager: {fileID: 0}
 --- !u!114 &854646850547235833
 MonoBehaviour:
