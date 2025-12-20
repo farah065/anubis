@@ -231,6 +231,7 @@ public abstract class Enemy : MonoBehaviour
                 {
                     _targetGameObj = other.gameObject;
                     CurrentState = EnemyState.Following;
+                    GameManager.Instance.EnterBattle();
                     _onDetectFeedbacks?.PlayFeedbacks();
                     yield break;
                 }

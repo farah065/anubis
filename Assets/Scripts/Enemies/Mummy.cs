@@ -38,7 +38,7 @@ public class Mummy : Enemy
         EnemySpawner.Instance.NumberOfEnemies--;
         if (EnemySpawner.Instance.NumberOfEnemies == 0)
         {
-            GameManager.Instance.SpawnPowerup();
+            GameManager.Instance.LevelCleared();
         }
 
         _mummyPool.Release(this);

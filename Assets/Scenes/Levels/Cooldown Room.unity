@@ -1787,6 +1787,7 @@ MonoBehaviour:
   - Level 2
   - Level 3
   - Level 4
+  gameplayMusicPlaylist: {fileID: 11400000, guid: 8068d4557fff10c4a827b51e2113a9f1, type: 2}
   powerupPrefab: {fileID: 5119622198065857754, guid: 24510f008695cc747a034bbaf5d4bb6c, type: 3}
   PowerupInScene: 0
 --- !u!4 &1548838667
