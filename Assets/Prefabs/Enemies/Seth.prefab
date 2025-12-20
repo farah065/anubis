@@ -154,7 +154,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.8
+  m_StoppingDistance: 3.8
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
@@ -3175,6 +3175,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -6518198981166678068, guid: 8460f9c26fcd6774eb20e66549c20ab0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3954419912833072591}
     - targetCorrespondingSourceObject: {fileID: 1082271958561512970, guid: 8460f9c26fcd6774eb20e66549c20ab0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4540663243685084898}
@@ -3233,6 +3236,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDamage: 0
   knockbackForce: 0
+--- !u!1 &121600529825437208 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6518198981166678068, guid: 8460f9c26fcd6774eb20e66549c20ab0, type: 3}
+  m_PrefabInstance: {fileID: 2610600721787234772}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &3954419912833072591
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121600529825437208}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 10.97
+  m_Direction: 1
+  m_Center: {x: 0.047732197, y: -1.92, z: 0.31564015}
 --- !u!4 &2571571858935434815 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8460f9c26fcd6774eb20e66549c20ab0, type: 3}

@@ -80,7 +80,7 @@ namespace GEM
 
         protected virtual void TakeDamage(float damage, Vector3 force)
         {
-            //health -= damage;
+            health -= damage;
             HealthbarController.Instance.UpdateHealthUI();
 
             if (health <= 0)

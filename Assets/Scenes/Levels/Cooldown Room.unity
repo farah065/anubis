@@ -614,7 +614,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 36.80954
+      value: 31.9206
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -622,11 +622,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -66.458824
+      value: -68.42125
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 36.80954
+      value: 31.9206
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -634,7 +634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -66.458824
+      value: -68.42125
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Damping.x
@@ -654,11 +654,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.x
-      value: 4.888941
+      value: 0.0000004470348
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.z
-      value: -5.108645
+      value: -7.071068
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Lookahead.Enabled

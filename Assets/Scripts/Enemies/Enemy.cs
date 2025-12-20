@@ -48,7 +48,7 @@ public abstract class Enemy : MonoBehaviour
         StopAllCoroutines();
     }
 
-    protected virtual void Update()
+    protected void Update()
     {
         if (_knockbackTimeRemaining > 0f && _knockbackVelocity.sqrMagnitude > 0.0001f)
         {
