@@ -55,13 +55,13 @@ public class GameManager : Singleton<GameManager>
         PlayIdleMusic();
     }
 
-    void PlayIdleMusic()
+    public void PlayIdleMusic()
     {
         if (MMSMPlaylistManager.Instance.CurrentSongIndex == 0) return;
         MMSMPlaylistManager.Instance.PlaySongAt(0);
     }
 
-    void PlayBattleMusic()
+    public void PlayBattleMusic()
     {
         if (MMSMPlaylistManager.Instance.CurrentSongIndex == 1) return;
         MMSMPlaylistManager.Instance.PlaySongAt(1);

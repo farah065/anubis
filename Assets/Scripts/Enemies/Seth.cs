@@ -15,6 +15,7 @@ public class Seth : Enemy
     {
         base.Initialise();
         meleeAttackData.attackDamage = _enemyData.Damage;
+        GameManager.Instance.PlayBattleMusic();
     }
 
     protected override void Die()
@@ -22,5 +23,6 @@ public class Seth : Enemy
         base.Die();
         Animator.Play("Die");
         Dialogue.Instance.StartDialogue();
+        GameManager.Instance.PlayIdleMusic();
     }
 }
