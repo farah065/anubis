@@ -10,7 +10,7 @@ public class PowerupPickup : MonoBehaviour
 
     private void Awake()
     {
-        PowerupSelectUI = FindFirstObjectByType<PowerupSelectUIManager>();
+        PowerupSelectUI = PowerupSelectUIManager.Instance;
     }
 
     private void Start()
@@ -27,13 +27,12 @@ public class PowerupPickup : MonoBehaviour
             PowerupSelectUI.SetUIVisibility(true);
             PowerupSelectUI.PopulatePowerupUI(Powerups);
             Time.timeScale = 0;
-
         }
     }
 
     public void ClosePowerupUI()
     {
-        Time.timeScale = 1;
+        Time.timeScale = 1;     
         PowerupSelectUI.SetUIVisibility(false);
         GameManager.Instance.PowerupInScene = false;
         Destroy(gameObject);

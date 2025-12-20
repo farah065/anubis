@@ -456,6 +456,15 @@ namespace GEM
             MoveSpeedBonus += value;
         }
 
+        public void ResetPowerups()
+        {
+            MeleeAttackDamageBonus = 0.0f;
+            MeleeAttackKnockbackBonus = 0.0f;
+            RangedAttackDamageBonus = 0.0f;
+            RangedAttackKnockbackBonus = 0.0f;
+            MoveSpeedBonus = 0.0f;
+            InitializeMeleeAttackData();
+        }
         #endregion
 
         #region Debug
