@@ -15,7 +15,8 @@ namespace GEM
         [SerializeField] private GameObject meleeAttackHitbox;
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private CharacterController controller;
-
+        [SerializeField] public GameObject Trail;
+         
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 2.0f;
         [SerializeField] private float dashSpeed = 30.0f;
@@ -412,6 +413,16 @@ namespace GEM
                 var nextState = attack3.FinishCombo(this);
                 ChangeState(nextState);
             }
+        }
+
+        public void EnableTrail()
+        {
+            Trail.SetActive(true);
+        }
+
+        public void DisableTrail()
+        {
+            Trail.SetActive(false);
         }
 
         #endregion
