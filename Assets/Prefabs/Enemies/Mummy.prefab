@@ -2671,7 +2671,7 @@ GameObject:
   - component: {fileID: 732586175342605709}
   m_Layer: 6
   m_Name: Mummy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3297,6 +3297,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -3379,7 +3383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2202449547766300210, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 2559285840627121667, guid: 3995fbc0715c95d47a1affaff57cc19c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
