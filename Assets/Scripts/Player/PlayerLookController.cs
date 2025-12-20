@@ -102,8 +102,8 @@ namespace GEM
             Vector3 cameraForward = mainCamera.transform.forward;
             cameraForward.y = 0f;
             Quaternion cameraRotation = Quaternion.LookRotation(cameraForward.normalized, Vector3.up);
-            Vector3 aimDirection = lookDirection + new Vector3(0, 1, 0); // this is incorrect
-            CurrentAimDirection = cameraRotation * aimDirection.normalized;
+            // Apply camera rotation to flat look direction (no vertical component)
+            CurrentAimDirection = cameraRotation * lookDirection.normalized;
 
             // ok so this took a while
             // the position composer is based on the player transform so need to rotate the look direction to prevent its axis from rotating with the player

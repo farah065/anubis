@@ -289,11 +289,12 @@ namespace GEM
             return _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
         }
 
-        public void SetPlayerRotation(Vector3 lookDirection)
+        public Vector3 SetPlayerRotation(Vector3 lookDirection)
         {
-            if (lookDirection.sqrMagnitude < 0.001f) return;
-            Vector3 flatDir = new Vector3(lookDirection.x, 0f, lookDirection.z);
+            if (lookDirection.sqrMagnitude < 0.001f) return transform.forward;
+            Vector3 flatDir = new Vector3(lookDirection.x, 0f, lookDirection.z).normalized;
             transform.rotation = Quaternion.LookRotation(flatDir);
+            return flatDir;
         }
 
         public void SetIsPerformingAction(bool isPerforming)
@@ -362,10 +363,16 @@ namespace GEM
 
         public void SpawnProjectile()
         {
+            SpawnProjectile(transform.forward);
+        }
+
+        public void SpawnProjectile(Vector3 direction)
+        {
+            Debug.Log($"Spawning projectile in direction: {direction}");
             if (projectilePrefab != null)
             {
-                Vector3 spawnPos = transform.position + Vector3.up + transform.forward * 0.5f;
-                Quaternion spawnRot = Quaternion.LookRotation(transform.forward, Vector3.up);
+                Vector3 spawnPos = transform.position + Vector3.up + direction * 0.5f;
+                Quaternion spawnRot = Quaternion.LookRotation(direction, Vector3.up);
                 var go = Instantiate(projectilePrefab, spawnPos, spawnRot);
                 var proj = go.GetComponent<PlayerProjectile>();
 
@@ -374,7 +381,7 @@ namespace GEM
 
                 if (proj != null)
                 {
-                    proj.Initialize(damage, knockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea);
+                    proj.Initialize(damage, knockback, baseRangedAttackSpeed, baseRangedAttackRange, baseRangedAttackArea, direction);
                 }
             }
         }
