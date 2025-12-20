@@ -29,7 +29,6 @@ namespace GEM
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"Name: {other.gameObject.name}, Tag: {other.gameObject.tag}");
             if (other.CompareTag("PlayerAttack"))
             {
                 return;
