@@ -106,6 +106,10 @@ public class GameManager : Singleton<GameManager>
 
             levelIndex++;
         }
+        else if (levelIndex == 5)
+        {
+            SceneManager.LoadScene("Boss Fight");
+        }
         else
         {
             ReturnToCooldownRoom();

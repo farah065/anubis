@@ -39,7 +39,7 @@ public abstract class Enemy : MonoBehaviour
     private Coroutine _playerDetectionCoroutine;
 
     #region monobehaviour methods
-    protected void OnEnable()
+    protected virtual void OnEnable()
     {
         // initialise the enemy and start patrolling
         Initialise();
@@ -145,6 +145,8 @@ public abstract class Enemy : MonoBehaviour
     #region protected methods
     protected virtual void Initialise()
     {
+        Debug.Log("Initialised enemy");
+
         _spawnFeedbacks?.PlayFeedbacks();
 
         // set agent parameters from scriptable object
@@ -156,7 +158,6 @@ public abstract class Enemy : MonoBehaviour
 
         // initialise the hp
         _currentHp = _enemyData.MaxHp;
-
     }
 
     protected IEnumerator PatrolRoutine()
@@ -229,7 +230,9 @@ public abstract class Enemy : MonoBehaviour
                 // if we hit a player, set them as the agent's target and change state to following instead of patrolling
                 if (hit.collider.CompareTag("Player"))
                 {
+                    Debug.Log("DETECTED PLAYER");
                     _targetGameObj = other.gameObject;
+                    Debug.Log("Target set to: " + _targetGameObj.name);
                     CurrentState = EnemyState.Following;
                     GameManager.Instance.EnterBattle();
                     _onDetectFeedbacks?.PlayFeedbacks();
@@ -286,7 +289,6 @@ public abstract class Enemy : MonoBehaviour
         StartCoroutine(AttackCoroutine());
     }
 
-    // TODO: add death animation and loot drop
     protected virtual void Die()
     {
         _canAttack=false;

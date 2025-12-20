@@ -47,6 +47,9 @@ namespace GEM
                 float damage = attack.attackDamage;
                 Vector3 force = forceDirection * attack.knockbackForce;
                 OnHit(damage, force);
+
+                // disable the attack hitbox after hitting the player to prevent multiple hits
+                other.enabled = false;
             }
         }
 

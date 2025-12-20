@@ -70,6 +70,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private void SpawnMummies()
     {
+        Debug.Log("Spawning Mummies: ");
         // get a random spawn point and enemy count
         Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
         int enemyCount = Random.Range(_minEnemies, _maxEnemies + 1);

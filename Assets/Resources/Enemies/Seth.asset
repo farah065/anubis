@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d59aa8529e02a74d9d37e971280816e, type: 3}
+  m_Name: Seth
+  m_EditorClassIdentifier: 
+  FollowSpeed: 3.5
+  PatrolSpeed: 1
+  AngularSpeed: 330
+  Acceleration: 8
+  StoppingDistance: 1
+  MaxHp: 400
+  Damage: 20
+  AttackCooldown: 3
+  PlayerDetectionRadius: 40
+  AttackZoneRadius: 1.2
+  PatrolRadius: 5
