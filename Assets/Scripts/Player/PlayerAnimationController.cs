@@ -88,8 +88,9 @@ namespace GEM
         {
             if (!_hasAnimator) return;
             playerAnimator.SetInteger(_animIDAttackIndex, stage);
-            //meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
-            meleeFeedbacks?.PlayFeedbacks();
+            
+            if (stage >= 0)
+            {meleeFeedbacks?.PlayFeedbacks();}
         }
 
         private void OnFootstep(AnimationEvent animationEvent)
