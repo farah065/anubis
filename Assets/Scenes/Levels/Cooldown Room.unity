@@ -559,7 +559,7 @@ GameObject:
   - component: {fileID: 997333811}
   m_Layer: 0
   m_Name: Post Process
-  m_TagString: DontDestroyOnLoad
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
