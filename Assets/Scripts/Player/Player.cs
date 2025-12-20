@@ -18,6 +18,7 @@ namespace GEM
         [SerializeField] private MMF_Player parryFeedbacks;
         [SerializeField] private float invulnerabilityDuration = 0.5f;
         private bool _isInvulnerable = false;
+        private Coroutine _activeParryCoroutine = null;
 
         private void Start()
         {
@@ -58,7 +59,13 @@ namespace GEM
             if (current is BlockingState blocking && blocking.IsInParryWindow)
             {
                 PlayerStateMachine.Instance.ResetParryCooldown();
-                StartCoroutine(Parry());
+                // Stop any existing parry coroutine before starting a new one
+                if (_activeParryCoroutine != null)
+                {
+                    StopCoroutine(_activeParryCoroutine);
+                    if (parryArcHitbox != null) parryArcHitbox.SetActive(false);
+                }
+                _activeParryCoroutine = StartCoroutine(Parry());
                 return;
             }
 
@@ -83,13 +90,13 @@ namespace GEM
         private IEnumerator Parry()
         {
             Debug.Log("Parry successful! No damage taken.");
-
-            parryArcHitbox.SetActive(true);
-            parryFeedbacks?.PlayFeedbacks();
             StartCoroutine(InvulnerabilityWindow());
+            yield return new WaitForSeconds(0.05f);
+            if (parryArcHitbox != null) parryArcHitbox.SetActive(true);
+            parryFeedbacks?.PlayFeedbacks();
             yield return new WaitForSeconds(0.3f);
-            parryArcHitbox.SetActive(false);
-
+            if (parryArcHitbox != null) parryArcHitbox.SetActive(false);
+            _activeParryCoroutine = null;
         }
 
         protected virtual void TakeDamage(float damage, Vector3 force)
