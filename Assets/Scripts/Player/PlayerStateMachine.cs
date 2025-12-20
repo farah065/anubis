@@ -343,15 +343,6 @@ namespace GEM
             MeleeAttackData = new AttackData();
             MeleeAttackData.Initialize(damage, knockback);
         }
-
-        public void EnableMeleeAttackHitbox(bool enabled)
-        {
-            if (meleeAttackHitbox != null)
-            {
-                meleeAttackHitbox.SetActive(enabled);
-            }
-        }
-
         public void ApplyMeleeAttackLunge(Vector3 dir)
         {
             Debug.Log("Applying melee attack lunge.");
@@ -391,8 +382,20 @@ namespace GEM
 
         #region Animation Events
 
+        public void EnableMeleeAttackHitbox()
+        {
+            meleeAttackHitbox.SetActive(true);
+        }
+
+        public void DisableMeleeAttackHitbox()
+        {
+            meleeAttackHitbox.SetActive(false);
+        }        
+
+
         public void OnMeleeAttackComplete()
         {
+            DisableMeleeAttackHitbox();
             // Called at end of each attack animation
             if (_currentState is MeleeAttack0State attack1)
             {
