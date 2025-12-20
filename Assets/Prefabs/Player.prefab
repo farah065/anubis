@@ -3617,7 +3617,7 @@ MonoBehaviour:
   meleeAttackHitbox: {fileID: 2199764122818276374}
   playerInput: {fileID: 8218533180043668272}
   controller: {fileID: 4416926081852918491}
-  Trail: {fileID: 0}
+  Trail: {fileID: 3257490535456149006}
   moveSpeed: 8
   dashSpeed: 30
   dashDistance: 3
