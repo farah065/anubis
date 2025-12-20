@@ -1,4 +1,5 @@
-﻿using MoreMountains.Feedbacks;
+﻿using System.Collections;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 namespace GEM
@@ -7,8 +8,9 @@ namespace GEM
     public class PlayerAnimationController : Singleton<PlayerAnimationController>
     {
         [Header("References")]
-        [SerializeField] private Animator animator;
-        public Animator Animator => animator;
+        [SerializeField] private Animator playerAnimator;
+        //[SerializeField] private Animator meleeAttackHitboxAnimator; attempted to hace a custom hitbox animator but abandoned due to too much complexity
+        public Animator PlayerAnimator => playerAnimator;
 
         [Header("Feedbacks")]
         [SerializeField] private MMF_Player footstepFeedbacks;
@@ -22,7 +24,6 @@ namespace GEM
         private int _animIDDash;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
-        private int _animIDAttack;
         private int _animIDAttackIndex;
         private int _animIDBlock;
 
@@ -30,11 +31,11 @@ namespace GEM
 
         private void Awake()
         {
-            if (animator == null)
+            if (playerAnimator == null)
             {
-                animator = GetComponent<Animator>();
+                playerAnimator = GetComponent<Animator>();
             }
-            _hasAnimator = animator != null;
+            _hasAnimator = playerAnimator != null;
             AssignAnimationIDs();
         }
 
@@ -46,36 +47,35 @@ namespace GEM
             _animIDDash = Animator.StringToHash("Dash");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-            _animIDAttack = Animator.StringToHash("Attack");
             _animIDAttackIndex = Animator.StringToHash("AttackIndex");
             _animIDBlock = Animator.StringToHash("Block");
         }
 
         public void SetGrounded(bool grounded)
         {
-            if (_hasAnimator) animator.SetBool(_animIDGrounded, grounded);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDGrounded, grounded);
         }
 
         public void SetSpeed(float blend, float motionMagnitude)
         {
             if (!_hasAnimator) return;
-            animator.SetFloat(_animIDSpeed, blend);
-            animator.SetFloat(_animIDMotionSpeed, motionMagnitude);
+            playerAnimator.SetFloat(_animIDSpeed, blend);
+            playerAnimator.SetFloat(_animIDMotionSpeed, motionMagnitude);
         }
 
         public void SetBlock(bool blocking)
         {
-            if (_hasAnimator) animator.SetBool(_animIDBlock, blocking);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDBlock, blocking);
         }
 
         public void SetFreeFall(bool freeFall)
         {
-            if (_hasAnimator) animator.SetBool(_animIDFreeFall, freeFall);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDFreeFall, freeFall);
         }
 
         public void SetDash(bool dashing)
         {
-            if (_hasAnimator) animator.SetBool(_animIDDash, dashing);
+            if (_hasAnimator) playerAnimator.SetBool(_animIDDash, dashing);
             // Feedbacks tied to dash start/stop can be handled here (optional)
             if (dashFeedbacks != null)
             {
@@ -86,14 +86,10 @@ namespace GEM
 
         public void SetMelee(int stage)
         {
-            if (stage == -1)
-            {
-                animator.SetBool(_animIDAttack, false);
-                return;
-            }
+            Debug.Log($"Setting melee attack to stage {stage}");
             if (!_hasAnimator) return;
-            animator.SetInteger(_animIDAttackIndex, stage);
-            animator.SetBool(_animIDAttack, true);
+            playerAnimator.SetInteger(_animIDAttackIndex, stage);
+            //meleeAttackHitboxAnimator.SetInteger(_animIDAttackIndex, stage);
             meleeFeedbacks?.PlayFeedbacks();
         }
 

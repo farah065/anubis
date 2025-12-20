@@ -687,10 +687,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7677803570359506853, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
-      propertyPath: meleeAttackData
-      value: 
-      objectReference: {fileID: 1793544758}
     - target: {fileID: 8218533180043668272, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_Camera
       value: 
@@ -699,23 +695,11 @@ PrefabInstance:
       propertyPath: cinemachinePositionComposer
       value: 
       objectReference: {fileID: 777289149}
-    m_RemovedComponents:
-    - {fileID: 7769750526398942986, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
---- !u!114 &1793544758 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6631136639008080499, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
-  m_PrefabInstance: {fileID: 1793544752}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04f98e6539cd4bb9b24d374261bcbee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &1811608952 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 4602050518572806138, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}

@@ -75,19 +75,19 @@ namespace GEM
                     ApplyMaxHealthPowerup(powerup.value);
                     break;
                 case PlayerProperty.MeleeAttackDamage:
-                    PlayerActionController.Instance.ApplyMeleeAttackDamagePowerup(powerup.value);
+                    PlayerStateMachine.Instance.ApplyMeleeAttackDamagePowerup(powerup.value);
                     break;
                 case PlayerProperty.MeleeAttackKnockback:
-                    PlayerActionController.Instance.ApplyMeleeAttackKnockbackPowerup(powerup.value);
+                    PlayerStateMachine.Instance.ApplyMeleeAttackKnockbackPowerup(powerup.value);
                     break;
                 case PlayerProperty.RangedAttackDamage:
-                    PlayerActionController.Instance.ApplyRangedAttackDamagePowerup(powerup.value);
+                    PlayerStateMachine.Instance.ApplyRangedAttackDamagePowerup(powerup.value);
                     break;
                 case PlayerProperty.RangedAttackKnockback:
-                    PlayerActionController.Instance.ApplyRangedAttackKnockbackPowerup(powerup.value);
+                    PlayerStateMachine.Instance.ApplyRangedAttackKnockbackPowerup(powerup.value);
                     break;
                 case PlayerProperty.MovementSpeed:
-                    PlayerMovementController.Instance.ApplyMovementSpeedPowerup(powerup.value);
+                    PlayerStateMachine.Instance.ApplyMovementSpeedPowerup(powerup.value);
                     break;
                 default:
                     Debug.LogWarning("Unknown powerup property");
