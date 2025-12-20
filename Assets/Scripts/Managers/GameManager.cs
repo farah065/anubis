@@ -90,7 +90,10 @@ public class GameManager : Singleton<GameManager>
     {
         SceneManager.LoadScene(cooldownRoom.name);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        player.GetComponent<Player>().health = 100;
+        Player.Instance.health = 100;
+        Player.Instance.maxHealth = 100;
+        PlayerStateMachine.Instance.ResetPowerups();
+        PowerupDisplayManager.Instance.ResetDisplayedPowerups();
     }
 
     public void SpawnPowerup()
