@@ -475,7 +475,7 @@ MonoBehaviour:
         BoundLight: {fileID: 309045896117183203}
         ExtraLights: []
         Mode: 0
-        Duration: 0.2
+        Duration: 0.4
         StartsOff: 1
         DisableOnStop: 1
         RelativeValues: 1
@@ -879,8 +879,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1454079720124038060}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.004711056, y: -0.9947133, z: -0.05430629, w: -0.087029465}
-  m_LocalPosition: {x: -0.015568459, y: -2.223963, z: 23.580883}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2278,13 +2278,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3257490535456149006}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.98200035, z: 0}
+  m_LocalRotation: {x: 0.9530322, y: 0, z: 0, w: 0.302869}
+  m_LocalPosition: {x: 0, y: 2.42, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8293100570329359016}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 144.74, y: 0, z: 0}
 --- !u!108 &309045896117183203
 Light:
   m_ObjectHideFlags: 0
@@ -2296,10 +2296,10 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.98470956, b: 0, a: 1}
-  m_Intensity: 2.1
-  m_Range: 10
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
+  m_Intensity: 1.82
+  m_Range: 3.95
+  m_SpotAngle: 104.11224
+  m_InnerSpotAngle: 104.11224
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -2338,7 +2338,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 14.68
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -3617,7 +3617,7 @@ MonoBehaviour:
   meleeAttackHitbox: {fileID: 2199764122818276374}
   playerInput: {fileID: 8218533180043668272}
   controller: {fileID: 4416926081852918491}
-  Trail: {fileID: 0}
+  Trail: {fileID: 1454079720124038060}
   moveSpeed: 8
   dashSpeed: 30
   dashDistance: 3
