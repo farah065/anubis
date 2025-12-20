@@ -1,9 +1,12 @@
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _settingsMenuUI;
+    [SerializeField] private MMF_Player buttonHoverFeedbacks;
+    [SerializeField] private MMF_Player buttonClickFeedbacks;
 
     private void Start()
     {
@@ -25,6 +28,16 @@ public class MainMenuManager : MonoBehaviour
     {
         BackgroundPanelController.Instance.HideBackgroundPanel();
         _settingsMenuUI.SetActive(false);
+    }
+
+    public void OnHoverButton()
+    {
+        buttonHoverFeedbacks?.PlayFeedbacks();
+    }
+
+    public void OnClickButton()
+    {
+        buttonClickFeedbacks?.PlayFeedbacks();
     }
 
     public void Quit()
