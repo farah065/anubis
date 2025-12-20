@@ -54,6 +54,7 @@ namespace GEM
             Debug.Log($"Value: {selectedPowerup.value}");
 
             Player.Instance.ApplyPowerup(selectedPowerup);
+            PowerupDisplayManager.Instance.AddPowerupToDisplay(selectedPowerup);
             intiatingPickup.ClosePowerupUI();
             intiatingPickup = null;
         }
