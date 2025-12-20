@@ -62,21 +62,22 @@ public class GameManager : Singleton<GameManager>
 
         if (levelIndex < 5)
         {
-            if (levelSceneNames.Count == 0)
-            {
-                Debug.LogError("No level scenes assigned!");
-                return;
-            }
+            //if (levelSceneNames.Count == 0)
+            //{
+            //    Debug.LogError("No level scenes assigned!");
+            //    return;
+            //}
 
-            string chosen;
-            do
-            {
-                chosen = levelSceneNames[Random.Range(0, levelSceneNames.Count)];
-            }
-            while (chosen == lastLevelName && levelSceneNames.Count > 1);
+            //string chosen;
+            //do
+            //{
+            //    chosen = levelSceneNames[Random.Range(0, levelSceneNames.Count)];
+            //}
+            //while (chosen == lastLevelName && levelSceneNames.Count > 1);
 
-            lastLevelName = chosen;
-            SceneManager.LoadScene(chosen);
+            //lastLevelName = chosen;
+            //SceneManager.LoadScene(chosen);
+            SceneManager.LoadScene("Boss Fight");
 
             levelIndex++;
         }

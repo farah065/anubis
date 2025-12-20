@@ -41,6 +41,9 @@ namespace GEM
                 float damage = attack.attackDamage;
                 Vector3 force = forceDirection * attack.knockbackForce;
                 OnHit(damage, force);
+
+                // disable the attack hitbox after hitting the player to prevent multiple hits
+                other.enabled = false;
             }
         }
 
@@ -77,7 +80,7 @@ namespace GEM
 
         protected virtual void TakeDamage(float damage, Vector3 force)
         {
-            health -= damage;
+            //health -= damage;
             HealthbarController.Instance.UpdateHealthUI();
 
             if (health <= 0)

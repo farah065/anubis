@@ -417,12 +417,18 @@ namespace GEM
 
         public void EnableTrail()
         {
-            Trail.SetActive(true);
+            if (Trail != null)
+            {
+                Trail.SetActive(true);
+            }
         }
 
         public void DisableTrail()
         {
-            Trail.SetActive(false);
+            if (Trail != null)
+            {
+                Trail.SetActive(false);
+            }
         }
 
         #endregion

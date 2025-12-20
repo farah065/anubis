@@ -7,7 +7,7 @@ public class AxeFeedbackController : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        Debug.Log($"Axe collided with: {collision.gameObject.name}, Tag: {collision.gameObject.tag}");
+        //Debug.Log($"Axe collided with: {collision.gameObject.name}, Tag: {collision.gameObject.tag}");
         if (collision.gameObject.CompareTag("Enemy"))
         {
             AxeImpactFeedbacks?.PlayFeedbacks();

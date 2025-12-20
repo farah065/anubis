@@ -30,7 +30,7 @@ public class EnemyDetectionController : MonoBehaviour
 
         if (hits.Length > 0)
         {
-            Collider playerCollider = hits[0];
+            Collider playerCollider = Array.Find(hits, hit => hit.CompareTag("Player"));
 
             if (!_playerInRange)
             {
