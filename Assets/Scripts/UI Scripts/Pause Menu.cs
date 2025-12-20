@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-   public MainMenu menu;
+    public MainMenuManager menu;
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            menu.Options();
+            //menu.Options();
         }
     }
 }

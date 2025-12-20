@@ -2,9 +2,7 @@ using System.Collections;
 using GEM;
 using MoreMountains.Feedbacks;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.AI;
-using MoreMountains.Feedbacks;
 
 public enum EnemyState
 {

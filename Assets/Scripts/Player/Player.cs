@@ -94,13 +94,12 @@ namespace GEM
 
         protected virtual void TakeDamage(float damage, Vector3 force)
         {
-            Debug.Log($"HP was: {health}");
             health -= damage;
             Debug.Log($"HP now: {health}");
 
             // Start invulnerability window after taking damage
             StartCoroutine(InvulnerabilityWindow());
-
+            HealthbarController.Instance.UpdateHealthUI();
             if (health <= 0)
             {
                 gameManager.ReturnToCooldownRoom();
@@ -119,6 +118,7 @@ namespace GEM
             healthBonus += value;
             maxHealth = maxHealth + (maxHealth * (healthBonus / 100));
             health = health + (health * (healthBonus / 100));
+            HealthbarController.Instance.UpdateHealthUI();
         }
 
 

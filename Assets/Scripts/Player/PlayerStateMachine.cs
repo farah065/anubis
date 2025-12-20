@@ -15,7 +15,8 @@ namespace GEM
         [SerializeField] private GameObject meleeAttackHitbox;
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private CharacterController controller;
-
+        [SerializeField] public GameObject Trail;
+         
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 2.0f;
         [SerializeField] private float dashSpeed = 30.0f;
@@ -414,6 +415,16 @@ namespace GEM
             }
         }
 
+        public void EnableTrail()
+        {
+            Trail.SetActive(true);
+        }
+
+        public void DisableTrail()
+        {
+            Trail.SetActive(false);
+        }
+
         #endregion
 
         #region Power-Ups
@@ -445,6 +456,15 @@ namespace GEM
             MoveSpeedBonus += value;
         }
 
+        public void ResetPowerups()
+        {
+            MeleeAttackDamageBonus = 0.0f;
+            MeleeAttackKnockbackBonus = 0.0f;
+            RangedAttackDamageBonus = 0.0f;
+            RangedAttackKnockbackBonus = 0.0f;
+            MoveSpeedBonus = 0.0f;
+            InitializeMeleeAttackData();
+        }
         #endregion
 
         #region Debug

@@ -148,7 +148,6 @@ namespace GEM
         {
             player.SetIsPerformingAction(true);
             PlayerAnimationController.Instance.SetDash(true);
-
             // Initialize dash
             _dashTimeRemaining = player.DashDistance / player.DashSpeed;
             player.InitializeDash();
