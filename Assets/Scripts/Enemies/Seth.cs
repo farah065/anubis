@@ -21,5 +21,6 @@ public class Seth : Enemy
     {
         base.Die();
         Animator.Play("Die");
+        Dialogue.Instance.StartDialogue();
     }
 }
