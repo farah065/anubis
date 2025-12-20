@@ -16,4 +16,10 @@ public class Seth : Enemy
         base.Initialise();
         meleeAttackData.attackDamage = _enemyData.Damage;
     }
+
+    protected override void Die()
+    {
+        base.Die();
+        Animator.Play("Die");
+    }
 }

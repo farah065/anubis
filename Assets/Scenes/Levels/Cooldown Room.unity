@@ -614,7 +614,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 31.9206
+      value: 31.920603
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -622,11 +622,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -68.42125
+      value: -54.279114
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 31.9206
+      value: 31.920603
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -634,7 +634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -68.42125
+      value: -54.279114
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Damping.x
@@ -654,11 +654,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.x
-      value: 0.0000004470348
+      value: 0.000001788139
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.z
-      value: -7.071068
+      value: 7.071068
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Lookahead.Enabled
@@ -1128,7 +1128,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1548838666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1321,7 +1321,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1995936359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1497,8 +1497,8 @@ SceneRoots:
   - {fileID: 1174615011}
   - {fileID: 2102875861682731912}
   - {fileID: 2015418016}
-  - {fileID: 1995936360}
   - {fileID: 1548838667}
+  - {fileID: 1995936360}
   - {fileID: 1871086239}
   - {fileID: 1793544752}
   - {fileID: 511142788}

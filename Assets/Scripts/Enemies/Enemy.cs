@@ -282,7 +282,6 @@ public abstract class Enemy : MonoBehaviour
         StartCoroutine(AttackCoroutine());
     }
 
-    // TODO: add death animation and loot drop
     protected virtual void Die()
     {
         _canAttack=false;
