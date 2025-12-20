@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 
 namespace GEM
@@ -13,6 +14,11 @@ namespace GEM
         public float blockFactor = 2f;
         public GameObject parryArcHitbox;
         [SerializeField] private GameManager gameManager;
+        [SerializeField] private MMF_Player hitFeedbacks;
+        [SerializeField] private MMF_Player parryFeedbacks;
+        [SerializeField] private float invulnerabilityDuration = 0.5f;
+        private bool _isInvulnerable = false;
+        private Coroutine _activeParryCoroutine = null;
 
         private void Start()
         {
@@ -55,38 +61,66 @@ namespace GEM
             // (allowing parry again) and play the parry arc visual.
             if (current is BlockingState blocking && blocking.IsInParryWindow)
             {
-                PlayerStateMachine.Instance.ResetParryCooldown(); //thing
-                StartCoroutine(Parry());
+                PlayerStateMachine.Instance.ResetParryCooldown();
+                // Stop any existing parry coroutine before starting a new one
+                if (_activeParryCoroutine != null)
+                {
+                    StopCoroutine(_activeParryCoroutine);
+                    if (parryArcHitbox != null) parryArcHitbox.SetActive(false);
+                }
+                _activeParryCoroutine = StartCoroutine(Parry());
                 return;
             }
-            else if (current is BlockingState)
+
+            // If invulnerable (from previous hit or parry), ignore damage
+            if (_isInvulnerable)
             {
-                // Blocking reduces incoming damage
+                Debug.Log("Player is invulnerable; hit ignored.");
+                return;
+            }
+
+            // Blocking reduces incoming damage
+            if (current is BlockingState)
+            {
                 damage /= blockFactor; 
             }
 
             TakeDamage(damage, force);
+            hitFeedbacks?.PlayFeedbacks();
             Debug.Log("Player hit!");
         }
 
         private IEnumerator Parry()
         {
             Debug.Log("Parry successful! No damage taken.");
-
-            parryArcHitbox.SetActive(true);
-            yield return new WaitForSeconds(0.2f);
-            parryArcHitbox.SetActive(false);
+            StartCoroutine(InvulnerabilityWindow());
+            yield return new WaitForSeconds(0.05f);
+            if (parryArcHitbox != null) parryArcHitbox.SetActive(true);
+            parryFeedbacks?.PlayFeedbacks();
+            yield return new WaitForSeconds(0.3f);
+            if (parryArcHitbox != null) parryArcHitbox.SetActive(false);
+            _activeParryCoroutine = null;
         }
 
         protected virtual void TakeDamage(float damage, Vector3 force)
         {
             health -= damage;
-            HealthbarController.Instance.UpdateHealthUI();
+            Debug.Log($"HP now: {health}");
 
+            // Start invulnerability window after taking damage
+            StartCoroutine(InvulnerabilityWindow());
+            HealthbarController.Instance.UpdateHealthUI();
             if (health <= 0)
             {
                 gameManager.ReturnToCooldownRoom();
             }
+        }
+
+        private IEnumerator InvulnerabilityWindow()
+        {
+            _isInvulnerable = true;
+            yield return new WaitForSeconds(invulnerabilityDuration);
+            _isInvulnerable = false;
         }
 
         public void ApplyMaxHealthPowerup(float value)

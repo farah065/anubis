@@ -19,9 +19,13 @@ public abstract class Enemy : MonoBehaviour
     public EnemyState CurrentState;
 
     [SerializeField] protected EnemyScriptableObject _enemyData;
-    [SerializeField] protected MMF_Player _onHitFeedbacks;
 
     [Header("Feedbacks")]
+    [SerializeField] protected MMF_Player _onDetectFeedbacks;
+
+    [SerializeField] protected MMF_Player _onHitFeedbacks;
+
+    [SerializeField] protected MMF_Player _idleFeedbacks;
     [SerializeField] protected MMF_Player _deathFeedbacks;
     [SerializeField] protected MMF_Player _spawnFeedbacks;
 
@@ -169,6 +173,7 @@ public abstract class Enemy : MonoBehaviour
 
             // Wait a bit at the patrol point
             yield return new WaitForSeconds(Random.Range(1f, 3f));
+            _idleFeedbacks?.PlayFeedbacks();
         }
     }
 
@@ -229,6 +234,8 @@ public abstract class Enemy : MonoBehaviour
                     _targetGameObj = other.gameObject;
                     Debug.Log("Target set to: " + _targetGameObj.name);
                     CurrentState = EnemyState.Following;
+                    GameManager.Instance.EnterBattle();
+                    _onDetectFeedbacks?.PlayFeedbacks();
                     yield break;
                 }
             }

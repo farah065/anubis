@@ -427,11 +427,13 @@ namespace GEM
         private float _attackDuration = 0.5f; // Duration of ranged attack animation
         private float _timer = 0f;
         private bool _projectileSpawned = false;
+        private Vector3 _cachedSpawnDirection;
 
         public override void Enter(PlayerStateMachine player)
         {
             player.SetIsPerformingAction(true);
-            player.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
+            // SetPlayerRotation now returns the normalized look direction
+            _cachedSpawnDirection = player.SetPlayerRotation(PlayerLookController.Instance.CurrentAimDirection);
 
             _timer = 0f;
             _projectileSpawned = false;
@@ -452,7 +454,7 @@ namespace GEM
             // Spawn projectile at peak of animation (halfway through)
             if (!_projectileSpawned && _timer >= _attackDuration * 0.5f)
             {
-                player.SpawnProjectile();
+                player.SpawnProjectile(_cachedSpawnDirection);
                 _projectileSpawned = true;
             }
 

@@ -9,6 +9,7 @@ TagManager:
   - PlayerAttack
   - SpawnPoint
   - EnemyAttack
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -80,7 +80,7 @@ namespace GEM
             if (dashFeedbacks != null)
             {
                 if (dashing && !dashFeedbacks.IsPlaying) dashFeedbacks.PlayFeedbacks();
-                else if (!dashing && dashFeedbacks.IsPlaying) dashFeedbacks.StopFeedbacks();
+                //else if (!dashing && dashFeedbacks.IsPlaying) dashFeedbacks.StopFeedbacks();
             }
         }
 
