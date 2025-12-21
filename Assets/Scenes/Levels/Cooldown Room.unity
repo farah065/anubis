@@ -311,13 +311,7 @@ PrefabInstance:
     - {fileID: 5689917692814982442, guid: 7b846d8f536f007498c941069487ce81, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3051928965768018776, guid: 7b846d8f536f007498c941069487ce81, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1029070440}
-    - targetCorrespondingSourceObject: {fileID: 3051928965768018776, guid: 7b846d8f536f007498c941069487ce81, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1029070436}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b846d8f536f007498c941069487ce81, type: 3}
 --- !u!1 &171647989 stripped
 GameObject:
@@ -1171,7 +1165,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 27.1956
+      value: 32.181454
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1179,11 +1173,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2029073933702284662, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -66.610825
+      value: -54.28392
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 27.1956
+      value: 32.181454
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1191,7 +1185,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2114559870356866818, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -66.610825
+      value: -54.28392
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Damping.x
@@ -1211,11 +1205,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.x
-      value: -4.724999
+      value: 0.260857
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: TargetOffset.z
-      value: -5.260645
+      value: 7.066255
       objectReference: {fileID: 0}
     - target: {fileID: 2170349479394424858, guid: 687cb89beb344bd4db7c6d99995ecebe, type: 3}
       propertyPath: Lookahead.Enabled
@@ -1850,45 +1844,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5004923838446027171, guid: ca703058a831baa478f85f71bef0cb40, type: 3}
   m_PrefabInstance: {fileID: 708866784}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1029070435 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3051928965768018776, guid: 7b846d8f536f007498c941069487ce81, type: 3}
-  m_PrefabInstance: {fileID: 157047639}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1029070436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029070435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a234f355da1369c4389318bcc244df45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameManager: {fileID: 1548838666}
---- !u!65 &1029070440
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029070435}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.0651984, y: 2.3765965, z: 0.6642761}
-  m_Center: {x: 0, y: 1.1870689, z: 0.0046897084}
 --- !u!1001 &1100312401
 PrefabInstance:
   m_ObjectHideFlags: 0

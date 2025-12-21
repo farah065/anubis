@@ -103,11 +103,12 @@ public class GameManager : Singleton<GameManager>
 
             lastLevelName = chosen;
             SceneManager.LoadScene(chosen);
-
+            Debug.Log("LEVEL INDEX: " + levelIndex);
             levelIndex++;
         }
         else if (levelIndex == 5)
         {
+            Debug.Log("Loading Boss Fight Scene, level index: " + levelIndex);
             SceneManager.LoadScene("Boss Fight");
         }
         else

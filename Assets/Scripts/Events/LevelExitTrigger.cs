@@ -25,6 +25,8 @@ public class LevelExitTrigger : MonoBehaviour
             Enemy enemy = FindFirstObjectByType<Enemy>();
             if (enemy == null)
             {
+                // switch off collider
+                GetComponent<Collider>().enabled = false;
                 gameManager.LoadRandomLevel();
             }
         }
