@@ -3660,17 +3660,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f512e288d5cde4ebd38385df17528f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelScenes:
-  - {fileID: 102900000, guid: 4e95d0683f57850498ada01ada41d9b1, type: 3}
-  - {fileID: 102900000, guid: e7557b16dd197d941b6125e411161843, type: 3}
-  - {fileID: 102900000, guid: 874a0964b4fc47f4298f4916b43c838f, type: 3}
-  - {fileID: 102900000, guid: 15915b31f50a95647a3c4ae71d00608b, type: 3}
-  cooldownRoom: {fileID: 102900000, guid: c53519b73c060aa4d83786ed12bf0490, type: 3}
   levelSceneNames:
   - Level 1
   - Level 2
   - Level 3
   - Level 4
+  cooldownRoomName: Cooldown Room
   gameplayMusicPlaylist: {fileID: 11400000, guid: 8068d4557fff10c4a827b51e2113a9f1, type: 2}
   powerupPrefab: {fileID: 5119622198065857754, guid: 24510f008695cc747a034bbaf5d4bb6c, type: 3}
   PowerupInScene: 0
@@ -5109,6 +5104,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 854646850547235833, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
+      propertyPath: showDebugGUI
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 939135256916110307, guid: 3ec4490aa61e0984389ccc97ad1af2ff, type: 3}
       propertyPath: m_CastShadows
       value: 0

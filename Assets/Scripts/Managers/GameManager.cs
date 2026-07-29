@@ -13,10 +13,11 @@ using UnityEditor;
 public class GameManager : Singleton<GameManager>
 {
 #if UNITY_EDITOR
-    [SerializeField] private List<SceneAsset> levelScenes;
-    [SerializeField] private SceneAsset cooldownRoom;
+    //[SerializeField] private List<SceneAsset> levelScenes;
+    //[SerializeField] private SceneAsset cooldownRoom;
 #endif
     [SerializeField] private List<string> levelSceneNames;
+    [SerializeField] private string cooldownRoomName;
     [SerializeField] private MMSMPlaylist gameplayMusicPlaylist;
     private string lastLevelName;
     private int levelIndex = 0;
@@ -25,18 +26,18 @@ public class GameManager : Singleton<GameManager>
     public bool PowerupInScene = false;
 
 #if UNITY_EDITOR
-    private void OnValidate()
-    {
-        // Auto-populate scene names from SceneAsset references
-        levelSceneNames = new List<string>();
-        foreach (var sceneAsset in levelScenes)
-        {
-            if (sceneAsset != null)
-            {
-                levelSceneNames.Add(sceneAsset.name);
-            }
-        }
-    }
+    //private void OnValidate()
+    //{
+    //    // Auto-populate scene names from SceneAsset references
+    //    levelSceneNames = new List<string>();
+    //    foreach (var sceneAsset in levelScenes)
+    //    {
+    //        if (sceneAsset != null)
+    //        {
+    //            levelSceneNames.Add(sceneAsset.name);
+    //        }
+    //    }
+    //}
 #endif
 
     void OnEnable()
@@ -119,7 +120,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ReturnToCooldownRoom()
     {
-        SceneManager.LoadScene(cooldownRoom.name);
+        SceneManager.LoadScene(cooldownRoomName);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         Player.Instance.health = 100;
         Player.Instance.maxHealth = 100;

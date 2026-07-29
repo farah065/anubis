@@ -46,6 +46,9 @@ namespace GEM
         [SerializeField] private LayerMask groundLayers;
         [SerializeField] private float gravity = -15.0f;
 
+        [Header("Debug")]
+        [SerializeField] private bool showDebugGUI;
+
         // Power-up bonuses
         public float MeleeAttackDamageBonus = 0.0f;
         public float MeleeAttackKnockbackBonus = 0.0f;
@@ -490,6 +493,8 @@ namespace GEM
         // Added OnGUI to show timers and current state for quick debugging.
         private void OnGUI()
         {
+            if (!showDebugGUI) { return; }
+
             // Small UI in top-left corner
             GUILayout.BeginArea(new Rect(10, 10, 320, 220), GUI.skin.box);
             GUILayout.BeginVertical();
